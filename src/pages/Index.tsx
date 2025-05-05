@@ -1,193 +1,198 @@
 
-import React, { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import Header from '@/components/Header';
-import { Button } from '@/components/ui/button';
-import ApiKeysSetup from '@/components/ApiKeysSetup';
+import RequirementsForm, { ProjectRequirements } from '@/components/RequirementsForm';
+import ArchitectureDisplay, { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
+import { generateArchitectureRecommendation } from '@/services/architectureService';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { motion } from 'framer-motion';
 
-export default function Index() {
-  const [showApiKeySetup, setShowApiKeySetup] = useState(false);
-  const [animationComplete, setAnimationComplete] = useState(false);
+const Index = () => {
+  const [requirements, setRequirements] = useState<ProjectRequirements | null>(null);
+  const [recommendation, setRecommendation] = useState<ArchitectureRecommendation | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("requirements");
+  const [showSplashScreen, setShowSplashScreen] = useState(true);
+
+  // Animation to hide splash screen after it completes
+  setTimeout(() => {
+    setShowSplashScreen(false);
+  }, 3000);
+
+  const handleSubmitRequirements = async (data: ProjectRequirements) => {
+    setRequirements(data);
+    setLoading(true);
+    setActiveTab("results");
+    
+    try {
+      const recommendation = await generateArchitectureRecommendation(data);
+      setRecommendation(recommendation);
+    } catch (error) {
+      console.error("Failed to generate architecture recommendation", error);
+      // In a production app, you'd add error handling UI here
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefine = () => {
+    setActiveTab("requirements");
+  };
 
   // Splash screen animation
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        staggerChildren: 0.3,
-        duration: 0.5,
-        when: "beforeChildren"
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { duration: 0.7 }
-    }
-  };
-
-  const logoVariants = {
-    hidden: { scale: 0.8, rotate: -5, opacity: 0 },
-    visible: {
-      scale: 1,
-      rotate: 0,
-      opacity: 1,
-      transition: { 
-        type: "spring",
-        stiffness: 100,
-        damping: 10,
-        duration: 0.8
-      }
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
-      <Header />
-
-      {!animationComplete ? (
+  if (showSplashScreen) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-background to-architect/5">
         <motion.div 
-          className="fixed inset-0 bg-background flex items-center justify-center z-50"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 0 }}
-          transition={{ delay: 2.5, duration: 0.5 }}
-          onAnimationComplete={() => setAnimationComplete(true)}
+          className="flex flex-col items-center justify-center"
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ 
+            scale: [0.5, 1.2, 1],
+            opacity: [0, 1, 1]
+          }}
+          transition={{ 
+            duration: 2,
+            times: [0, 0.6, 1],
+            ease: "easeInOut"
+          }}
         >
           <motion.div
-            className="flex flex-col items-center"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+            className="relative"
+            animate={{ 
+              rotate: [0, -10, 10, -5, 0],
+              y: [0, -20, 0]
+            }}
+            transition={{ 
+              duration: 2,
+              times: [0, 0.2, 0.5, 0.8, 1],
+              ease: "easeInOut"
+            }}
           >
-            <motion.div 
-              className="mb-6" 
-              variants={logoVariants}
-            >
-              <img 
-                src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
-                alt="DesignPanda Logo" 
-                className="h-32 w-32 object-contain" 
-              />
-            </motion.div>
-            <motion.h1 
-              className="text-5xl font-bold text-architect mb-2"
-              variants={itemVariants}
-            >
-              DesignPanda
-            </motion.h1>
-            <motion.p 
-              className="text-xl text-muted-foreground"
-              variants={itemVariants}
-            >
-              Intelligent Software Architecture Design
-            </motion.p>
-          </motion.div>
-        </motion.div>
-      ) : null}
-
-      <main className="container mx-auto px-4 py-24">
-        <motion.div 
-          className="max-w-4xl mx-auto text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: animationComplete ? 0 : 3, duration: 0.5 }}
-        >
-          <div className="flex justify-center mb-8">
+            <div className="absolute inset-0 bg-white/30 rounded-full filter blur-xl"></div>
             <img 
               src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
               alt="DesignPanda Logo" 
-              className="h-24 w-24 object-contain" 
+              className="w-32 h-32 object-contain relative z-10" 
             />
-          </div>
+          </motion.div>
           
-          <h1 className="text-5xl font-bold mb-6 text-architect">
-            Architect Your Software With AI
-          </h1>
+          <motion.h1
+            className="mt-6 text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-architect-dark to-architect"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+          >
+            DesignPanda
+          </motion.h1>
           
-          <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-            DesignPanda uses advanced AI to generate optimal software architecture 
-            recommendations based on your project requirements.
-          </p>
-
-          {showApiKeySetup ? (
-            <div className="mb-8">
-              <ApiKeysSetup onComplete={() => setShowApiKeySetup(false)} />
-              <Button
-                variant="outline"
-                className="mt-4"
-                onClick={() => setShowApiKeySetup(false)}
-              >
-                Cancel
-              </Button>
-            </div>
-          ) : (
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-              <Link to="/requirements">
-                <Button size="lg" className="gradient-btn">
-                  Start New Project
-                </Button>
-              </Link>
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={() => setShowApiKeySetup(true)}
-              >
-                Configure API Keys
-              </Button>
-            </div>
-          )}
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-            <div className="text-center p-6 rounded-lg border">
-              <div className="h-12 w-12 bg-architect/10 text-architect rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"></path><path d="M12 13v8"></path><path d="M12 3v3"></path></svg>
-              </div>
-              <h3 className="text-lg font-bold mb-2">Smart Recommendations</h3>
-              <p className="text-muted-foreground">Get intelligent architecture suggestions based on your specific project needs and constraints.</p>
-            </div>
-            
-            <div className="text-center p-6 rounded-lg border">
-              <div className="h-12 w-12 bg-architect/10 text-architect rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-              </div>
-              <h3 className="text-lg font-bold mb-2">Visual Diagrams</h3>
-              <p className="text-muted-foreground">Visualize your architecture with clear, interactive diagrams that explain component relationships.</p>
-            </div>
-            
-            <div className="text-center p-6 rounded-lg border">
-              <div className="h-12 w-12 bg-architect/10 text-architect rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 14 4-4"></path><path d="M3.34 19a10 10 0 1 1 17.32 0"></path></svg>
-              </div>
-              <h3 className="text-lg font-bold mb-2">Tech Stack Selection</h3>
-              <p className="text-muted-foreground">Find the optimal combination of frameworks, libraries, and tools for your specific project.</p>
-            </div>
-          </div>
+          <motion.p
+            className="mt-2 text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.8 }}
+          >
+            Software Architecture Design
+          </motion.p>
         </motion.div>
-      </main>
+      </div>
+    );
+  }
 
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header />
+      
+      <main className="flex-1 container py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold tracking-tight text-architect">DesignPanda</h1>
+          <p className="mt-2 text-xl text-muted-foreground">
+            Transform your project ideas into professional software architecture
+          </p>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="requirements">Project Requirements</TabsTrigger>
+            <TabsTrigger value="results" disabled={!requirements}>Architecture Results</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="requirements" className="mt-6">
+            <RequirementsForm onSubmit={handleSubmitRequirements} />
+          </TabsContent>
+          
+          <TabsContent value="results" className="mt-6">
+            <ArchitectureDisplay 
+              requirements={requirements!} 
+              recommendation={recommendation}
+              loading={loading}
+              onRefine={handleRefine}
+            />
+          </TabsContent>
+        </Tabs>
+
+        <div className="mt-16">
+          <h2 className="text-2xl font-semibold text-center mb-6">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-full bg-architect flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                  <path d="M4 10h12" />
+                  <path d="M4 14h9" />
+                  <path d="M4 18h6" />
+                  <rect width="8" height="4" x="12" y="6" rx="1" />
+                </svg>
+              </div>
+              <h3 className="font-semibold mb-2">Define Your Requirements</h3>
+              <p className="text-muted-foreground">Tell us about your project goals, scale, and essential features.</p>
+            </div>
+            
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-full bg-architect flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                  <path d="M2 9.5V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4.5" />
+                  <path d="M8 11V9" />
+                  <path d="M16 11V9" />
+                  <path d="M22 13H2" />
+                  <path d="M22 2 2 22" />
+                </svg>
+              </div>
+              <h3 className="font-semibold mb-2">AI Analysis</h3>
+              <p className="text-muted-foreground">Our AI analyzes your needs to determine optimal architecture patterns.</p>
+            </div>
+            
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-full bg-architect flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                  <path d="M3 7h5l2 3h6l2-3h3l-4 9H7l-4-9Z" />
+                  <path d="M7 7 4.5 3h15L17 7" />
+                </svg>
+              </div>
+              <h3 className="font-semibold mb-2">Complete Blueprint</h3>
+              <p className="text-muted-foreground">Receive detailed recommendations including frameworks, libraries, and deployment options.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+      
       <footer className="border-t py-6">
         <div className="container flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">
             <img 
               src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
               alt="DesignPanda Logo" 
-              className="h-8 w-8 object-contain" 
+              className="h-5 w-5 object-contain" 
             />
             <p className="text-sm text-muted-foreground">© 2025 DesignPanda. All rights reserved.</p>
           </div>
           <div className="flex gap-4 mt-4 md:mt-0">
-            <a href="#" className="text-sm text-muted-foreground hover:text-architect">Terms</a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-architect">Privacy</a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-architect">Contact</a>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Terms</a>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Privacy</a>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Contact</a>
           </div>
         </div>
       </footer>
     </div>
   );
-}
+};
+
+export default Index;
