@@ -22,6 +22,7 @@ const ApiKeysSetup = ({ onComplete }: ApiKeysSetupProps) => {
   });
 
   useEffect(() => {
+    // Prefill with the provided API keys
     const prefilledKeys = {
       [API_KEYS.GROQ_API_KEY]: "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",
       [API_KEYS.LANGCHAIN_API_KEY]: "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",
