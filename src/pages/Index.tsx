@@ -5,12 +5,19 @@ import RequirementsForm, { ProjectRequirements } from '@/components/Requirements
 import ArchitectureDisplay, { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
 import { generateArchitectureRecommendation } from '@/services/architectureService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { motion } from 'framer-motion';
 
 const Index = () => {
   const [requirements, setRequirements] = useState<ProjectRequirements | null>(null);
   const [recommendation, setRecommendation] = useState<ArchitectureRecommendation | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("requirements");
+  const [showSplashScreen, setShowSplashScreen] = useState(true);
+
+  // Animation to hide splash screen after it completes
+  setTimeout(() => {
+    setShowSplashScreen(false);
+  }, 3000);
 
   const handleSubmitRequirements = async (data: ProjectRequirements) => {
     setRequirements(data);
@@ -32,13 +39,72 @@ const Index = () => {
     setActiveTab("requirements");
   };
 
+  // Splash screen animation
+  if (showSplashScreen) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-background to-architect/5">
+        <motion.div 
+          className="flex flex-col items-center justify-center"
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ 
+            scale: [0.5, 1.2, 1],
+            opacity: [0, 1, 1]
+          }}
+          transition={{ 
+            duration: 2,
+            times: [0, 0.6, 1],
+            ease: "easeInOut"
+          }}
+        >
+          <motion.div
+            className="relative"
+            animate={{ 
+              rotate: [0, -10, 10, -5, 0],
+              y: [0, -20, 0]
+            }}
+            transition={{ 
+              duration: 2,
+              times: [0, 0.2, 0.5, 0.8, 1],
+              ease: "easeInOut"
+            }}
+          >
+            <div className="absolute inset-0 bg-white/30 rounded-full filter blur-xl"></div>
+            <img 
+              src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
+              alt="DesignPanda Logo" 
+              className="w-32 h-32 object-contain relative z-10" 
+            />
+          </motion.div>
+          
+          <motion.h1
+            className="mt-6 text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-architect-dark to-architect"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+          >
+            DesignPanda
+          </motion.h1>
+          
+          <motion.p
+            className="mt-2 text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.8 }}
+          >
+            Software Architecture Design
+          </motion.p>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       
       <main className="flex-1 container py-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold tracking-tight text-architect">ArchitectAI</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-architect">DesignPanda</h1>
           <p className="mt-2 text-xl text-muted-foreground">
             Transform your project ideas into professional software architecture
           </p>
@@ -111,12 +177,12 @@ const Index = () => {
       <footer className="border-t py-6">
         <div className="container flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-architect">
-              <path d="M3 7h5l2 3h6l2-3h3l-4 9H7l-4-9Z" />
-              <path d="M7 7 4.5 3h15L17 7" />
-              <path d="m12 16-1 6h2l1-6" />
-            </svg>
-            <p className="text-sm text-muted-foreground">© 2025 ArchitectAI. All rights reserved.</p>
+            <img 
+              src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
+              alt="DesignPanda Logo" 
+              className="h-5 w-5 object-contain" 
+            />
+            <p className="text-sm text-muted-foreground">© 2025 DesignPanda. All rights reserved.</p>
           </div>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Terms</a>

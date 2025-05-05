@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
 import { Button } from '@/components/ui/button';
+import { DeploymentMetrics } from './ResultsHelpers';
 
 interface OverviewTabProps {
   recommendation: ArchitectureRecommendation;
@@ -76,31 +77,36 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ recommendation, renderDiagram
           <CardContent className="pt-6">
             <h2 className="text-lg font-bold mb-4">Deployment Analysis</h2>
             <div className="space-y-4">
-              {recommendation.deployment.map((option, index) => (
-                <div key={`analysis-${index}`} className="flex flex-col">
-                  <div className="flex justify-between items-center">
-                    <h4 className="font-medium">{option.name}</h4>
-                    <Badge variant={index === 0 ? "default" : "outline"}>
-                      {index === 0 ? "Recommended" : "Alternative"}
-                    </Badge>
+              {recommendation.deployment.map((option, index) => {
+                // Use default values if metrics is undefined
+                const metrics = option.metrics || { costEfficiency: 'Medium', scalability: 'High', complexity: 'Low' };
+                
+                return (
+                  <div key={`analysis-${index}`} className="flex flex-col">
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-medium">{option.name}</h4>
+                      <Badge variant={index === 0 ? "default" : "outline"}>
+                        {index === 0 ? "Recommended" : "Alternative"}
+                      </Badge>
+                    </div>
+                    <div className="mt-2 text-xs">
+                      <div className="flex justify-between mb-1">
+                        <span>Cost efficiency</span>
+                        <span className="font-medium">{metrics.costEfficiency || "Medium"}</span>
+                      </div>
+                      <div className="flex justify-between mb-1">
+                        <span>Scalability</span>
+                        <span className="font-medium">{metrics.scalability || "High"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Setup complexity</span>
+                        <span className="font-medium">{metrics.complexity || "Low"}</span>
+                      </div>
+                    </div>
+                    {index < recommendation.deployment.length - 1 && <Separator className="my-2" />}
                   </div>
-                  <div className="mt-2 text-xs">
-                    <div className="flex justify-between mb-1">
-                      <span>Cost efficiency</span>
-                      <span className="font-medium">{option.metrics?.costEfficiency || "Medium"}</span>
-                    </div>
-                    <div className="flex justify-between mb-1">
-                      <span>Scalability</span>
-                      <span className="font-medium">{option.metrics?.scalability || "High"}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Setup complexity</span>
-                      <span className="font-medium">{option.metrics?.complexity || "Low"}</span>
-                    </div>
-                  </div>
-                  {index < recommendation.deployment.length - 1 && <Separator className="my-2" />}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
