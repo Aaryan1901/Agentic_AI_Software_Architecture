@@ -9,7 +9,6 @@ import NotFound from "./pages/NotFound";
 import ProjectInput from "./pages/ProjectInput";
 import RequirementsPage from "./pages/RequirementsPage";
 import ResultsPage from "./pages/ResultsPage";
-import HeroLandingPage from "./pages/HeroLandingPage";
 
 const queryClient = new QueryClient();
 
@@ -20,8 +19,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HeroLandingPage />} />
-          <Route path="/input" element={<ProjectInput />} />
+          <Route path="/" element={<ProjectInput />} />
           <Route path="/requirements" element={<RequirementsPage />} />
           <Route path="/results" element={<ResultsPage />} />
           <Route path="/original" element={<Index />} />
