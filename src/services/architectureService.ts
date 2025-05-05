@@ -1,39 +1,22 @@
+
 import { ProjectRequirements } from '@/components/RequirementsForm';
 import { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
 import { searchProjectInformation, SearchResult, LLMModel } from './searchService';
 import { generateDiagramFromRequirements } from './diagramService';
-import { getGroqApiKey, getLangchainApiKey, getLangchainProject } from '@/utils/apiKeys';
 
-// This service uses AI and search APIs to generate architecture recommendations
+// This is a mock service that would be replaced with actual AI logic or API calls
 export const generateArchitectureRecommendation = async (
   requirements: ProjectRequirements
 ): Promise<ArchitectureRecommendation> => {
   console.log("Generating architecture recommendation for:", requirements);
   
-  // Check if we have API keys for enhanced recommendations
-  const groqApiKey = getGroqApiKey();
-  const langchainApiKey = getLangchainApiKey();
-  
-  // Get the selected LLM model from localStorage, or use GROQ if available
-  let selectedModel: LLMModel = 'default';
-  if (groqApiKey) {
-    selectedModel = 'groq';
-  } else {
-    selectedModel = (localStorage.getItem('selectedLLM') as LLMModel) || 'default';
-  }
-  
+  // Get the selected LLM model from localStorage, or default if not set
+  const selectedModel = (localStorage.getItem('selectedLLM') as LLMModel) || 'default';
   console.log("Using LLM model:", selectedModel);
   
   // First, search for relevant information about the project using the selected LLM
   const searchQuery = `${requirements.projectType} application with ${requirements.features.join(', ')} features`;
   const searchResults = await searchProjectInformation(searchQuery, selectedModel);
-  
-  // If we have a LangChain API key, we could enhance the recommendation with their API
-  // This is shown here as a placeholder for future implementation
-  if (langchainApiKey) {
-    console.log("LangChain API key is available for enhanced recommendations");
-    // Future implementation: Call LangChain API for enhanced recommendations
-  }
   
   // Simulate API call delay for the actual recommendation generation
   await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -262,124 +245,97 @@ const getLibrariesByFeatures = (features: string[]) => {
 };
 
 const getDeploymentByScalability = (scalability: string) => {
-  // ... keep existing code (deployment options generation with metrics object added)
-  const genDeploymentOptions = (options: any[]) => {
-    return options.map(option => ({
-      ...option,
-      metrics: {
-        costEfficiency: option.metrics?.costEfficiency || 'Medium',
-        scalability: option.metrics?.scalability || 'High',
-        complexity: option.metrics?.complexity || 'Low'
-      }
-    }));
-  };
-
   switch (scalability) {
     case 'low':
-      return genDeploymentOptions([
+      return [
         {
           name: 'Shared Hosting',
           description: 'Traditional web hosting with shared resources',
-          costEstimate: '$5-20/month',
-          metrics: { costEfficiency: 'High', scalability: 'Low', complexity: 'Low' }
+          costEstimate: '$5-20/month'
         },
         {
           name: 'Vercel',
           description: 'Platform for frontend frameworks and static sites',
-          costEstimate: 'Free to $20+/month',
-          metrics: { costEfficiency: 'High', scalability: 'Medium', complexity: 'Low' }
+          costEstimate: 'Free to $20+/month'
         },
         {
           name: 'Netlify',
           description: 'Platform for modern web projects',
-          costEstimate: 'Free to $45+/month',
-          metrics: { costEfficiency: 'High', scalability: 'Medium', complexity: 'Low' }
+          costEstimate: 'Free to $45+/month'
         }
-      ]);
+      ];
     case 'medium':
-      return genDeploymentOptions([
+      return [
         {
           name: 'AWS Elastic Beanstalk',
           description: 'Easy to use service for deploying and scaling web applications',
-          costEstimate: '$20-100/month',
-          metrics: { costEfficiency: 'Medium', scalability: 'Medium', complexity: 'Medium' }
+          costEstimate: '$20-100/month'
         },
         {
           name: 'Heroku',
           description: 'Cloud platform that lets you build, deliver, monitor and scale apps',
-          costEstimate: '$25-500/month',
-          metrics: { costEfficiency: 'Medium', scalability: 'Medium', complexity: 'Low' }
+          costEstimate: '$25-500/month'
         },
         {
           name: 'Digital Ocean',
           description: 'Cloud infrastructure provider',
-          costEstimate: '$5-200/month',
-          metrics: { costEfficiency: 'High', scalability: 'Medium', complexity: 'Medium' }
+          costEstimate: '$5-200/month'
         }
-      ]);
+      ];
     case 'high':
-      return genDeploymentOptions([
+      return [
         {
           name: 'AWS ECS/EKS',
           description: 'Container orchestration services',
-          costEstimate: '$100-1,000/month',
-          metrics: { costEfficiency: 'Medium', scalability: 'High', complexity: 'High' }
+          costEstimate: '$100-1,000/month'
         },
         {
           name: 'Google Kubernetes Engine',
           description: 'Managed Kubernetes service',
-          costEstimate: '$100-1,000/month',
-          metrics: { costEfficiency: 'Medium', scalability: 'High', complexity: 'High' }
+          costEstimate: '$100-1,000/month'
         },
         {
           name: 'Azure App Service',
           description: 'Fully managed platform for building web apps',
-          costEstimate: '$50-500/month',
-          metrics: { costEfficiency: 'Medium', scalability: 'High', complexity: 'Medium' }
+          costEstimate: '$50-500/month'
         }
-      ]);
+      ];
     case 'enterprise':
-      return genDeploymentOptions([
+      return [
         {
           name: 'Multi-Cloud Kubernetes',
           description: 'Distributed across multiple cloud providers',
-          costEstimate: '$1,000-10,000+/month',
-          metrics: { costEfficiency: 'Low', scalability: 'Very High', complexity: 'Very High' }
+          costEstimate: '$1,000-10,000+/month'
         },
         {
           name: 'Custom Data Center',
           description: 'On-premise or colocation solutions',
-          costEstimate: '$10,000+/month',
-          metrics: { costEfficiency: 'Low', scalability: 'High', complexity: 'High' }
+          costEstimate: '$10,000+/month'
         },
         {
           name: 'AWS Global Accelerator + CloudFront',
           description: 'Global network and content delivery service',
-          costEstimate: '$1,000-5,000+/month',
-          metrics: { costEfficiency: 'Medium', scalability: 'Very High', complexity: 'High' }
+          costEstimate: '$1,000-5,000+/month'
         }
-      ]);
+      ];
     default:
-      return genDeploymentOptions([
+      return [
         {
           name: 'AWS Elastic Beanstalk',
           description: 'Easy to use service for deploying and scaling web applications',
-          costEstimate: '$20-100/month',
-          metrics: { costEfficiency: 'Medium', scalability: 'Medium', complexity: 'Medium' }
+          costEstimate: '$20-100/month'
         },
         {
           name: 'Heroku',
           description: 'Cloud platform that lets you build, deliver, monitor and scale apps',
-          costEstimate: '$25-500/month',
-          metrics: { costEfficiency: 'Medium', scalability: 'Medium', complexity: 'Low' }
+          costEstimate: '$25-500/month'
         },
         {
           name: 'Digital Ocean',
           description: 'Cloud infrastructure provider',
-          costEstimate: '$5-200/month',
-          metrics: { costEfficiency: 'High', scalability: 'Medium', complexity: 'Medium' }
+          costEstimate: '$5-200/month'
         }
-      ]);
+      ];
   }
 };
 
