@@ -1,6 +1,4 @@
-
-// This service connects to open-source LLMs for intelligent project searches
-// Currently implemented with mock responses to demonstrate the concept
+// This service connects to LLMs for intelligent project searches
 import { getGroqApiKey, getSerperApiKey, getTavilyApiKey, getGoogleApiKey } from '@/utils/apiKeys';
 
 export interface SearchResult {
@@ -28,6 +26,7 @@ export const searchProjectInformation = async (
   // If we have the GROQ API key and the model is groq, use the GROQ API
   if (groqApiKey && model === 'groq') {
     try {
+      console.log("Using GROQ API for search...");
       return await searchWithGroq(query, groqApiKey);
     } catch (error) {
       console.error("Error with GROQ search:", error);
@@ -39,8 +38,10 @@ export const searchProjectInformation = async (
   if (serperApiKey || tavilyApiKey) {
     try {
       if (serperApiKey) {
+        console.log("Using Serper API for search...");
         return await searchWithSerper(query, serperApiKey);
       } else if (tavilyApiKey) {
+        console.log("Using Tavily API for search...");
         return await searchWithTavily(query, tavilyApiKey);
       }
     } catch (error) {
@@ -49,6 +50,7 @@ export const searchProjectInformation = async (
     }
   }
 
+  console.log("Using mock search data since no APIs are available or there were errors...");
   // Simulate network delay for the search operation when using mock data
   await new Promise(resolve => setTimeout(resolve, 1500));
   
@@ -64,7 +66,7 @@ export const searchProjectInformation = async (
   }
 };
 
-// New function to search using GROQ API
+// Function to search using GROQ API
 const searchWithGroq = async (query: string, apiKey: string): Promise<SearchResult[]> => {
   const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -98,6 +100,7 @@ const searchWithGroq = async (query: string, apiKey: string): Promise<SearchResu
   try {
     // Parse the response content to extract search results
     const content = data.choices[0].message.content;
+    console.log("GROQ API response:", content);
     
     // Simple parsing logic - in production you would want more robust parsing
     const results: SearchResult[] = [];
@@ -159,6 +162,8 @@ const searchWithSerper = async (query: string, apiKey: string): Promise<SearchRe
   }
 
   const data = await response.json();
+  console.log("Serper API response:", data);
+  
   const results: SearchResult[] = [];
   
   // Parse organic search results
@@ -197,6 +202,8 @@ const searchWithTavily = async (query: string, apiKey: string): Promise<SearchRe
   }
 
   const data = await response.json();
+  console.log("Tavily API response:", data);
+  
   const results: SearchResult[] = [];
   
   if (data.results && Array.isArray(data.results)) {
