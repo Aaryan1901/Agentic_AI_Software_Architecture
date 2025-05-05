@@ -13,6 +13,9 @@ const HeroLandingPage: React.FC = () => {
   useEffect(() => {
     // Trigger animations after component mount
     setIsLoaded(true);
+    
+    // Update document title
+    document.title = "DesignPanda - Architecture AI";
   }, []);
   
   // Animation variants
@@ -68,6 +71,29 @@ const HeroLandingPage: React.FC = () => {
     }
   };
   
+  const logoVariants = {
+    hidden: { y: -50, opacity: 0, rotate: -10 },
+    visible: { 
+      y: 0, 
+      opacity: 1, 
+      rotate: 0,
+      transition: {
+        type: "spring",
+        stiffness: 200,
+        damping: 20,
+        delay: 0.2
+      }
+    },
+    float: {
+      y: [0, -15, 0],
+      transition: {
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+  
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-architect/5 overflow-hidden">
       <Header />
@@ -85,7 +111,7 @@ const HeroLandingPage: React.FC = () => {
       </motion.div>
       
       {/* Main content */}
-      <main className="flex-1 container py-10 lg:py-20 flex flex-col items-center justify-center relative z-10">
+      <main className="flex-1 container py-10 lg:py-16 flex flex-col items-center justify-center relative z-10">
         <motion.div
           className="max-w-4xl mx-auto text-center"
           initial="hidden"
@@ -93,11 +119,25 @@ const HeroLandingPage: React.FC = () => {
           variants={containerVariants}
         >
           <motion.div
+            className="mx-auto mb-6 relative w-32 h-32"
+            variants={logoVariants}
+            animate={isLoaded ? ["visible", "float"] : "hidden"}
+          >
+            <div className="absolute inset-0 bg-white/30 rounded-full filter blur-xl transform -rotate-2"></div>
+            <img 
+              src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
+              alt="DesignPanda Logo" 
+              className="w-full h-full object-contain relative z-10" 
+            />
+            <div className="absolute top-[70%] left-[50%] transform -translate-x-1/2 w-16 h-4 bg-black/20 rounded-full filter blur-md"></div>
+          </motion.div>
+          
+          <motion.div
             className="inline-block mb-2"
             variants={itemVariants}
           >
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-architect/10 text-architect">
-              Architect AI - Design Better Software
+              DesignPanda - Design Better Software
             </span>
           </motion.div>
           
@@ -167,7 +207,7 @@ const HeroLandingPage: React.FC = () => {
         
         {/* Animated card */}
         <motion.div
-          className="mt-20 relative w-full max-w-5xl mx-auto"
+          className="mt-16 relative w-full max-w-5xl mx-auto"
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
@@ -213,7 +253,7 @@ const HeroLandingPage: React.FC = () => {
         
         {/* CTA */}
         <motion.div
-          className="mt-20 text-center"
+          className="mt-16 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1.5 }}
@@ -232,12 +272,14 @@ const HeroLandingPage: React.FC = () => {
       <footer className="border-t py-6">
         <div className="container flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-architect">
-              <path d="M3 7h5l2 3h6l2-3h3l-4 9H7l-4-9Z" />
-              <path d="M7 7 4.5 3h15L17 7" />
-              <path d="m12 16-1 6h2l1-6" />
-            </svg>
-            <p className="text-sm text-muted-foreground">© 2025 ArchitectAI. All rights reserved.</p>
+            <motion.img 
+              src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
+              alt="DesignPanda Logo" 
+              className="h-6 w-6 object-contain"
+              whileHover={{ rotate: 10, scale: 1.2 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            />
+            <p className="text-sm text-muted-foreground">© 2025 DesignPanda. All rights reserved.</p>
           </div>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a href="#" className="text-sm text-muted-foreground hover:text-architect">Terms</a>
