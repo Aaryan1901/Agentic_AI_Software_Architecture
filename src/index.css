@@ -151,6 +151,30 @@
   .border-gradient {
     @apply border-2 transition-all duration-300 hover:shadow-lg hover:shadow-architect/20 overflow-hidden;
   }
+  
+  /* Float animation */
+  .float {
+    @apply animate-[float_6s_ease-in-out_infinite];
+  }
+  
+  /* Floating element animation */
+  .floating-element {
+    @apply absolute opacity-50 rounded-full blur-lg animate-pulse;
+  }
+  
+  /* 3D card effect */
+  .card-3d {
+    @apply transition-all duration-500 hover:shadow-xl hover:rotate-1 hover:-translate-y-1;
+  }
+  
+  /* Reveal animation */
+  .reveal {
+    @apply opacity-0 translate-y-8 transition-all duration-700;
+  }
+  
+  .reveal.revealed {
+    @apply opacity-100 translate-y-0;
+  }
 }
 
 /* Loading dots animation */
@@ -175,4 +199,52 @@
   100% {
     transform: translateX(100%);
   }
+}
+
+/* Background shine animation */
+@keyframes background-shine {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Rotating color animation */
+@keyframes rotate-color {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Float animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Scroll reveal intersection observer */
+.scroll-trigger {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-trigger.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
