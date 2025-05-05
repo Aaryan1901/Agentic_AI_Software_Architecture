@@ -313,25 +313,6 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
           </Tabs>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <h3 className="text-md font-semibold mb-2 text-green-600">Pros</h3>
-            <ul className="list-disc list-inside text-sm space-y-1">
-              {recommendation.pros.map((pro, index) => (
-                <li key={index}>{pro}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-md font-semibold mb-2 text-red-600">Cons</h3>
-            <ul className="list-disc list-inside text-sm space-y-1">
-              {recommendation.cons.map((con, index) => (
-                <li key={index}>{con}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
         <div className="flex justify-end space-x-2 pt-4">
           <Button variant="outline">Export as PDF</Button>
           <Button className="bg-architect hover:bg-architect-dark">

@@ -243,12 +243,10 @@ const ResultsPage: React.FC = () => {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full">
+          <TabsList className="grid grid-cols-1 md:grid-cols-3 w-full">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="diagrams">Diagrams</TabsTrigger>
             <TabsTrigger value="tech-stack">Tech Stack</TabsTrigger>
-            <TabsTrigger value="deployment">Deployment</TabsTrigger>
-            <TabsTrigger value="analysis">Analysis</TabsTrigger>
           </TabsList>
           
           {/* Overview Tab */}
@@ -294,28 +292,6 @@ const ResultsPage: React.FC = () => {
               </div>
               
               <div className="space-y-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <h2 className="text-lg font-bold mb-4">Pros & Cons</h2>
-                    <div className="mb-4">
-                      <h3 className="text-md font-semibold mb-2 text-green-600">Advantages</h3>
-                      <ul className="list-disc list-inside text-sm space-y-1">
-                        {recommendation.pros.map((pro, index) => (
-                          <li key={index} className="text-muted-foreground">{pro}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h3 className="text-md font-semibold mb-2 text-red-600">Limitations</h3>
-                      <ul className="list-disc list-inside text-sm space-y-1">
-                        {recommendation.cons.map((con, index) => (
-                          <li key={index} className="text-muted-foreground">{con}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-                
                 <Card>
                   <CardContent className="pt-6">
                     <h2 className="text-lg font-bold mb-4">Cost Estimation</h2>
@@ -472,187 +448,6 @@ const ResultsPage: React.FC = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          
-          {/* Deployment Tab */}
-          <TabsContent value="deployment" className="pt-4">
-            <Card>
-              <CardContent className="pt-6">
-                <h2 className="text-xl font-bold mb-4">Deployment Options</h2>
-                <div className="space-y-6">
-                  {recommendation.deployment.map((option, index) => (
-                    <div key={index} className="border rounded-lg p-4">
-                      <div className="flex justify-between">
-                        <h3 className="text-lg font-semibold">{option.name}</h3>
-                        <Badge variant="outline" className="text-lg">{option.costEstimate}</Badge>
-                      </div>
-                      <p className="text-muted-foreground mt-2">{option.description}</p>
-                      
-                      <div className="mt-4 grid grid-cols-3 gap-4">
-                        <div>
-                          <h4 className="text-sm font-medium">Scalability</h4>
-                          <div className="flex items-center space-x-1 mt-1">
-                            {Array.from({ length: Math.floor(Math.random() * 5) + 3 }).map((_, i) => (
-                              <div key={i} className="w-1.5 h-4 bg-architect rounded-full"/>
-                            ))}
-                            {Array.from({ length: 10 - (Math.floor(Math.random() * 5) + 3) }).map((_, i) => (
-                              <div key={i} className="w-1.5 h-4 bg-muted rounded-full"/>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium">Complexity</h4>
-                          <div className="flex items-center space-x-1 mt-1">
-                            {Array.from({ length: Math.floor(Math.random() * 5) + 2 }).map((_, i) => (
-                              <div key={i} className="w-1.5 h-4 bg-amber-500 rounded-full"/>
-                            ))}
-                            {Array.from({ length: 10 - (Math.floor(Math.random() * 5) + 2) }).map((_, i) => (
-                              <div key={i} className="w-1.5 h-4 bg-muted rounded-full"/>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium">Maintenance</h4>
-                          <div className="flex items-center space-x-1 mt-1">
-                            {Array.from({ length: Math.floor(Math.random() * 5) + 1 }).map((_, i) => (
-                              <div key={i} className="w-1.5 h-4 bg-red-500 rounded-full"/>
-                            ))}
-                            {Array.from({ length: 10 - (Math.floor(Math.random() * 5) + 1) }).map((_, i) => (
-                              <div key={i} className="w-1.5 h-4 bg-muted rounded-full"/>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-8">
-                  <h3 className="text-lg font-semibold mb-3">Deployment Steps</h3>
-                  <ol className="list-decimal list-inside space-y-3">
-                    <li className="text-muted-foreground">
-                      <span className="font-medium text-foreground">Set up infrastructure</span>: Create servers or cloud resources according to the selected deployment option.
-                    </li>
-                    <li className="text-muted-foreground">
-                      <span className="font-medium text-foreground">Configure environment</span>: Install necessary software and dependencies.
-                    </li>
-                    <li className="text-muted-foreground">
-                      <span className="font-medium text-foreground">Set up CI/CD pipeline</span>: Automate the build and deployment process.
-                    </li>
-                    <li className="text-muted-foreground">
-                      <span className="font-medium text-foreground">Deploy application</span>: Deploy the application to production.
-                    </li>
-                    <li className="text-muted-foreground">
-                      <span className="font-medium text-foreground">Configure monitoring</span>: Set up logging, alerting, and performance monitoring.
-                    </li>
-                  </ol>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Analysis Tab */}
-          <TabsContent value="analysis" className="pt-4">
-            <Card>
-              <CardContent className="pt-6">
-                <h2 className="text-xl font-bold mb-4">Risk Analysis</h2>
-                
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-3">Potential Risks</h3>
-                  <div className="space-y-4">
-                    <RiskItem 
-                      title="Scalability Challenges"
-                      description="The architecture may face performance issues with unexpected growth."
-                      severity="medium"
-                      mitigation="Implement horizontal scaling and caching strategies early."
-                    />
-                    <RiskItem 
-                      title="Technology Learning Curve"
-                      description="Team may need time to adapt to some of the recommended technologies."
-                      severity="low"
-                      mitigation="Plan for training and start with simpler components."
-                    />
-                    <RiskItem 
-                      title="Integration Complexity"
-                      description="Multiple systems integration may cause unforeseen issues."
-                      severity="high"
-                      mitigation="Create detailed integration tests and fallback mechanisms."
-                    />
-                    <RiskItem 
-                      title="Security Vulnerabilities"
-                      description="The selected stack may have security issues if not properly configured."
-                      severity="medium"
-                      mitigation="Implement security best practices and regular audits."
-                    />
-                  </div>
-                </div>
-                
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-3">Timeline Estimate</h3>
-                  <div className="space-y-4">
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium mb-2">Minimal Viable Product</h4>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-grow bg-muted rounded-full h-2 overflow-hidden">
-                          <div className="bg-green-500 h-full" style={{ width: '30%' }}></div>
-                        </div>
-                        <span className="text-sm font-medium">1-2 months</span>
-                      </div>
-                    </div>
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium mb-2">Core Features</h4>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-grow bg-muted rounded-full h-2 overflow-hidden">
-                          <div className="bg-amber-500 h-full" style={{ width: '60%' }}></div>
-                        </div>
-                        <span className="text-sm font-medium">3-4 months</span>
-                      </div>
-                    </div>
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium mb-2">Complete Solution</h4>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-grow bg-muted rounded-full h-2 overflow-hidden">
-                          <div className="bg-red-500 h-full" style={{ width: '90%' }}></div>
-                        </div>
-                        <span className="text-sm font-medium">6+ months</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Alternative Approaches</h3>
-                  <div className="space-y-4">
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium">Microservices Architecture</h4>
-                      <div className="mt-2 space-y-1 text-sm">
-                        <div className="flex">
-                          <span className="text-green-600 font-medium w-20">Pros:</span>
-                          <span className="text-muted-foreground">Better scalability, independent services</span>
-                        </div>
-                        <div className="flex">
-                          <span className="text-red-600 font-medium w-20">Cons:</span>
-                          <span className="text-muted-foreground">Higher complexity, deployment overhead</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium">Serverless Architecture</h4>
-                      <div className="mt-2 space-y-1 text-sm">
-                        <div className="flex">
-                          <span className="text-green-600 font-medium w-20">Pros:</span>
-                          <span className="text-muted-foreground">Lower operational costs, automatic scaling</span>
-                        </div>
-                        <div className="flex">
-                          <span className="text-red-600 font-medium w-20">Cons:</span>
-                          <span className="text-muted-foreground">Cold starts, vendor lock-in risks</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
         
         <Pagination className="mt-8">
@@ -722,40 +517,6 @@ const ProgressStep = ({
     </div>
   </div>
 );
-
-const RiskItem = ({ 
-  title, 
-  description, 
-  severity,
-  mitigation 
-}: { 
-  title: string;
-  description: string;
-  severity: 'low' | 'medium' | 'high';
-  mitigation: string;
-}) => {
-  const severityColor = {
-    low: 'bg-green-100 text-green-700',
-    medium: 'bg-amber-100 text-amber-700',
-    high: 'bg-red-100 text-red-700'
-  };
-  
-  return (
-    <div className="border rounded-lg p-4">
-      <div className="flex items-start justify-between">
-        <h4 className="font-medium">{title}</h4>
-        <Badge className={severityColor[severity]}>
-          {severity.charAt(0).toUpperCase() + severity.slice(1)}
-        </Badge>
-      </div>
-      <p className="text-sm text-muted-foreground mt-1">{description}</p>
-      <div className="mt-2 text-sm">
-        <span className="font-medium">Mitigation: </span>
-        <span className="text-muted-foreground">{mitigation}</span>
-      </div>
-    </div>
-  );
-};
 
 // Helper functions
 const formatProjectType = (type: string): string => {
