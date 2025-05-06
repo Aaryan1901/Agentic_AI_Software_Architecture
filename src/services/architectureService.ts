@@ -3,8 +3,11 @@ import { ProjectRequirements } from '@/components/RequirementsForm';
 import { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
 import { searchProjectInformation, SearchResult, LLMModel } from './searchService';
 import { generateDiagramFromRequirements } from './diagramService';
+import { getAIAgentRecommendation } from './aiAgentService';
+import { toast } from "sonner";
+import { DeploymentMetrics } from '@/components/results/ResultsHelpers';
 
-// This is a mock service that would be replaced with actual AI logic or API calls
+// This function generates architecture recommendations, now with support for the external AI agent
 export const generateArchitectureRecommendation = async (
   requirements: ProjectRequirements
 ): Promise<ArchitectureRecommendation> => {
@@ -14,28 +17,53 @@ export const generateArchitectureRecommendation = async (
   const selectedModel = (localStorage.getItem('selectedLLM') as LLMModel) || 'default';
   console.log("Using LLM model:", selectedModel);
   
-  // First, search for relevant information about the project using the selected LLM
+  // First, try to use the AI agent backend if available
+  let architectureDescription = null;
+  try {
+    toast.info("Connecting to AI agent backend...");
+    architectureDescription = await getAIAgentRecommendation(requirements);
+    
+    if (architectureDescription) {
+      toast.success("Architecture generated using AI agent backend");
+    }
+  } catch (error) {
+    console.error("Error using AI agent backend:", error);
+    toast.error("Could not connect to AI backend. Using fallback architecture generation.");
+  }
+  
+  // If AI agent failed or returned null, search for relevant information using the selected LLM
   const searchQuery = `${requirements.projectType} application with ${requirements.features.join(', ')} features`;
   const searchResults = await searchProjectInformation(searchQuery, selectedModel);
   
-  // Simulate API call delay for the actual recommendation generation
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  // Use the search results to influence the recommendation
-  // In a real implementation, this would use more sophisticated AI logic
+  // Determine the architecture pattern from either AI agent result or fallback logic
   let pattern = 'Microservices';
-  let description = 'A microservices architecture with distributed components';
+  let description = architectureDescription || 'A microservices architecture with distributed components';
   
-  // Adjust recommendation based on search results and requirements
-  if (requirements.projectType === 'webapp' && requirements.scalability === 'low') {
-    pattern = 'Monolithic MVC';
-    description = 'A traditional monolithic application with Model-View-Controller pattern';
-  } else if (requirements.projectType === 'mobile') {
-    pattern = 'Clean Architecture';
-    description = 'Domain-driven design with clean separation of concerns';
-  } else if (requirements.features.includes('Real-time Updates')) {
-    pattern = 'Event-Driven Architecture';
-    description = 'Reactive system based on events and message queues';
+  // Only use fallback logic if we didn't get a result from the AI agent
+  if (!architectureDescription) {
+    // Adjust recommendation based on search results and requirements
+    if (requirements.projectType === 'webapp' && requirements.scalability === 'low') {
+      pattern = 'Monolithic MVC';
+      description = 'A traditional monolithic application with Model-View-Controller pattern';
+    } else if (requirements.projectType === 'mobile') {
+      pattern = 'Clean Architecture';
+      description = 'Domain-driven design with clean separation of concerns';
+    } else if (requirements.features.includes('Real-time Updates')) {
+      pattern = 'Event-Driven Architecture';
+      description = 'Reactive system based on events and message queues';
+    }
+  } else {
+    // If we have an AI agent result, try to extract the pattern from the description
+    if (architectureDescription.toLowerCase().includes('microservices')) {
+      pattern = 'Microservices';
+    } else if (architectureDescription.toLowerCase().includes('monolith') || 
+              architectureDescription.toLowerCase().includes('mvc')) {
+      pattern = 'Monolithic MVC';
+    } else if (architectureDescription.toLowerCase().includes('clean architecture')) {
+      pattern = 'Clean Architecture';
+    } else if (architectureDescription.toLowerCase().includes('event-driven')) {
+      pattern = 'Event-Driven Architecture';
+    }
   }
 
   // Generate frameworks based on project type
@@ -51,7 +79,7 @@ export const generateArchitectureRecommendation = async (
   const pros = getProsForPattern(pattern);
   const cons = getConsForPattern(pattern);
   
-  // Generate diagrams using our new diagram service
+  // Generate diagrams using our diagram service
   const flowchartDiagram = await generateDiagramFromRequirements(requirements, {
     type: 'flowchart',
     title: `${requirements.projectName} Flow Diagram`

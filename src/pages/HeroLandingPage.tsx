@@ -1,283 +1,117 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Code, Cpu, Database, LayoutTemplate, Server } from 'lucide-react';
 import Header from '@/components/Header';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Settings, Server, Code2, Rocket, Cpu } from 'lucide-react';
 
 const HeroLandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const [isLoaded, setIsLoaded] = useState(false);
-  
-  useEffect(() => {
-    // Trigger animations after component mount
-    setIsLoaded(true);
-    
-    // Update document title
-    document.title = "DesignPanda - Architecture AI";
-  }, []);
-  
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10
-      }
-    }
-  };
-  
-  const iconVariants = {
-    hidden: { scale: 0, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        delay: 0.6
-      }
-    },
-    hover: {
-      scale: 1.1,
-      rotate: 5,
-      transition: { duration: 0.3 }
-    }
-  };
-  
-  const backgroundVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 0.2,
-      transition: {
-        duration: 1.5
-      }
-    }
-  };
-  
-  const logoVariants = {
-    hidden: { y: -50, opacity: 0, rotate: -10 },
-    visible: { 
-      y: 0, 
-      opacity: 1, 
-      rotate: 0,
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 20,
-        delay: 0.2
-      }
-    },
-    float: {
-      y: [0, -15, 0],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
-  
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-architect/5 overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
       
-      {/* Background animated elements */}
-      <motion.div
-        className="absolute inset-0 overflow-hidden z-0 pointer-events-none"
-        initial="hidden"
-        animate={isLoaded ? "visible" : "hidden"}
-        variants={backgroundVariants}
-      >
-        <div className="absolute top-[10%] left-[5%] w-[30rem] h-[30rem] bg-architect/30 rounded-full filter blur-[8rem]"></div>
-        <div className="absolute bottom-[10%] right-[5%] w-[20rem] h-[20rem] bg-architect-vibrant/20 rounded-full filter blur-[6rem]"></div>
-        <div className="absolute top-[40%] right-[15%] w-[25rem] h-[25rem] bg-architect-magenta/20 rounded-full filter blur-[7rem]"></div>
-      </motion.div>
-      
-      {/* Main content */}
-      <main className="flex-1 container py-10 lg:py-16 flex flex-col items-center justify-center relative z-10">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          initial="hidden"
-          animate={isLoaded ? "visible" : "hidden"}
-          variants={containerVariants}
-        >
-          <motion.div
-            className="mx-auto mb-6 relative w-32 h-32"
-            variants={logoVariants}
-            animate={isLoaded ? ["visible", "float"] : "hidden"}
-          >
-            <div className="absolute inset-0 bg-white/30 rounded-full filter blur-xl transform -rotate-2"></div>
-            <img 
-              src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
-              alt="DesignPanda Logo" 
-              className="w-full h-full object-contain relative z-10" 
-            />
-            <div className="absolute top-[70%] left-[50%] transform -translate-x-1/2 w-16 h-4 bg-black/20 rounded-full filter blur-md"></div>
-          </motion.div>
-          
-          <motion.div
-            className="inline-block mb-2"
-            variants={itemVariants}
-          >
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-architect/10 text-architect">
-              DesignPanda - Design Better Software
-            </span>
-          </motion.div>
-          
-          <motion.h1
-            className="text-4xl md:text-6xl font-bold tracking-tight mb-4 gradient-text"
-            variants={itemVariants}
-          >
-            Transform Your Ideas Into
-            <br />
-            <span className="shiny-text text-5xl md:text-7xl">Robust Architecture</span>
-          </motion.h1>
-          
-          <motion.p
-            className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto"
-            variants={itemVariants}
-          >
-            Let AI design the perfect software architecture for your next project.
-            Analyze requirements, select frameworks, and visualize your solution with ease.
-          </motion.p>
-          
-          <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
-            variants={itemVariants}
-          >
-            <Button
-              size="lg"
-              className="text-lg bg-architect hover:bg-architect-dark shine"
-              onClick={() => navigate('/input')}
-            >
-              Start Designing <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg border-architect text-architect hover:bg-architect/10"
-            >
-              View Examples
-            </Button>
-          </motion.div>
-          
-          {/* Animated icons */}
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-3xl mx-auto"
-            variants={containerVariants}
-          >
-            {[
-              { icon: <LayoutTemplate className="h-8 w-8" />, label: "Front-end" },
-              { icon: <Server className="h-8 w-8" />, label: "Back-end" },
-              { icon: <Database className="h-8 w-8" />, label: "Database" },
-              { icon: <Cpu className="h-8 w-8" />, label: "Infrastructure" },
-              { icon: <Code className="h-8 w-8" />, label: "API Design" }
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                className="flex flex-col items-center"
-                variants={iconVariants}
-                whileHover="hover"
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="py-20 md:py-32 bg-gradient-to-r from-indigo-50 via-white to-indigo-50">
+          <div className="container mx-auto text-center px-4">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-architect">
+              Intelligent Software Architecture Design
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10">
+              DesignPanda leverages AI to create optimized software architecture 
+              tailored to your project requirements.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                className="text-lg px-8 py-6 bg-architect hover:bg-architect/90"
+                onClick={() => navigate('/input')}
               >
-                <div className="w-16 h-16 rounded-full bg-architect/10 flex items-center justify-center text-architect mb-2">
-                  {item.icon}
-                </div>
-                <p className="font-medium">{item.label}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
+                Start New Project
+              </Button>
+              <Button 
+                variant="outline" 
+                className="text-lg px-8 py-6"
+                onClick={() => navigate('/backend-setup')}
+              >
+                Configure Backend
+              </Button>
+            </div>
+          </div>
+        </section>
         
-        {/* Animated card */}
-        <motion.div
-          className="mt-16 relative w-full max-w-5xl mx-auto"
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-architect to-architect-vibrant opacity-30 blur-lg rounded-xl transform -rotate-1"></div>
-          <div className="relative glass-card rounded-xl p-8 border border-white/20 bg-white/5 backdrop-blur-xl">
-            <h2 className="text-2xl font-bold mb-4 text-center">How It Works</h2>
+        {/* Features Section */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  step: "1",
-                  title: "Describe Your Project",
-                  description: "Tell us about your project goals, requirements, constraints and features."
+                  icon: <Settings className="h-8 w-8 mb-4 text-architect" />,
+                  title: "Input Requirements",
+                  description: "Specify your project details, constraints, and functional requirements."
                 },
                 {
-                  step: "2",
-                  title: "Refine Requirements",
-                  description: "Add detailed technical requirements and specify your project's needs."
+                  icon: <Cpu className="h-8 w-8 mb-4 text-architect" />,
+                  title: "AI Analysis",
+                  description: "Our AI analyzes requirements and determines optimal architecture patterns."
                 },
                 {
-                  step: "3",
-                  title: "Get Architecture Plan",
-                  description: "Receive a comprehensive architecture design with diagrams and tech stack recommendations."
+                  icon: <Code2 className="h-8 w-8 mb-4 text-architect" />,
+                  title: "Architecture Design",
+                  description: "Receive detailed architecture diagrams, tech stack recommendations, and deployment options."
                 }
-              ].map((step, i) => (
-                <motion.div
-                  key={i}
-                  className="flex flex-col items-center text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.9 + (i * 0.2) }}
-                >
-                  <div className="w-10 h-10 rounded-full bg-architect/20 flex items-center justify-center text-architect font-bold mb-3">
-                    {step.step}
-                  </div>
-                  <h3 className="text-lg font-medium mb-2">{step.title}</h3>
-                  <p className="text-muted-foreground">{step.description}</p>
-                </motion.div>
+              ].map((feature, index) => (
+                <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+                  <CardContent className="flex flex-col items-center text-center p-6">
+                    {feature.icon}
+                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
-        </motion.div>
+        </section>
         
-        {/* CTA */}
-        <motion.div
-          className="mt-16 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.5 }}
-        >
-          <h2 className="text-2xl font-bold mb-4">Ready to transform your project?</h2>
-          <Button
-            size="lg"
-            className="text-lg bg-architect hover:bg-architect-dark"
-            onClick={() => navigate('/input')}
-          >
-            Start Designing <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </motion.div>
+        {/* CTA Section */}
+        <section className="py-16 bg-architect text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-6">Ready to Design Your Architecture?</h2>
+            <p className="text-xl max-w-2xl mx-auto mb-8">
+              Start building better software systems with architecture designed for your specific needs.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                variant="secondary" 
+                className="text-lg px-8 py-6"
+                onClick={() => navigate('/input')}
+              >
+                <Rocket className="mr-2 h-5 w-5" />
+                Get Started
+              </Button>
+              <Button 
+                variant="outline" 
+                className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-architect"
+                onClick={() => navigate('/backend-setup')}
+              >
+                <Server className="mr-2 h-5 w-5" />
+                Configure Backend
+              </Button>
+            </div>
+          </div>
+        </section>
       </main>
       
       <footer className="border-t py-6">
         <div className="container flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">
-            <motion.img 
+            <img 
               src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
               alt="DesignPanda Logo" 
-              className="h-6 w-6 object-contain"
-              whileHover={{ rotate: 10, scale: 1.2 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              className="h-8 w-8 object-contain" 
             />
             <p className="text-sm text-muted-foreground">© 2025 DesignPanda. All rights reserved.</p>
           </div>

@@ -21,9 +21,17 @@ export const formatScale = (scale: string): string => {
   return scales[scale] || scale;
 };
 
-// Add this type definition to fix the TypeScript error
+// Define the type for deployment metrics
 export interface DeploymentMetrics {
   costEfficiency?: string;
   scalability?: string;
   complexity?: string;
+}
+
+// Define the interface for deployment options
+export interface DeploymentOption {
+  name: string;
+  description: string;
+  costEstimate: string;
+  metrics?: DeploymentMetrics;
 }
