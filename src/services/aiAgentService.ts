@@ -32,8 +32,6 @@ export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAg
   const features = requirements.features.map(feature => {
     if (typeof feature === 'string') {
       return feature;
-    } else if (feature && typeof feature === 'object' && 'toString' in feature) {
-      return feature.toString();
     }
     return 'Feature';
   });

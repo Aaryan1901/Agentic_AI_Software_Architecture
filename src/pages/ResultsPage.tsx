@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -234,16 +233,28 @@ const ResultsPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Project Type</h3>
-              <p className="font-medium">{formatProjectType(requirements.projectType)}</p>
+              <p className="font-medium">{formatProjectType(requirements?.projectType || '')}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Expected Scale</h3>
-              <p className="font-medium">{formatScale(requirements.scale)}</p>
+              <p className="font-medium">{formatScale(requirements?.scale)}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Architecture Pattern</h3>
-              <p className="font-medium">{recommendation.pattern}</p>
+              <p className="font-medium">{recommendation?.pattern}</p>
             </div>
+            {requirements?.budget && (
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">Budget</h3>
+                <p className="font-medium">{requirements.budget}</p>
+              </div>
+            )}
+            {requirements?.timeConstraints && (
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">Timeline</h3>
+                <p className="font-medium">{requirements.timeConstraints}</p>
+              </div>
+            )}
           </div>
         </div>
         

@@ -39,11 +39,13 @@ export const generateArchitectureRecommendation = async (
       console.log("Architecture from AI agent:", architectureDescription);
       
       // Store UML data if available
-      umlDiagram = {
-        plantUmlCode: backendResponse.uml_code || '',
-        svgContent: backendResponse.image_data ? 
-          `<img src="data:${backendResponse.mime_type};base64,${backendResponse.image_data}" alt="UML Diagram" style="max-width: 100%;" />` : '',
-      };
+      if (backendResponse.uml_code) {
+        umlDiagram = {
+          plantUmlCode: backendResponse.uml_code,
+          svgContent: backendResponse.image_data ? 
+            `<img src="data:${backendResponse.mime_type || 'image/png'};base64,${backendResponse.image_data}" alt="UML Diagram" style="max-width: 100%;" />` : '',
+        };
+      }
     } else {
       toast.warning("AI agent returned empty result. Using fallback method.");
     }
@@ -103,6 +105,9 @@ export const generateArchitectureRecommendation = async (
   // Generate diagrams using our diagram service or use the one from the backend
   let flowchartDiagram = umlDiagram;
   let useCaseDiagram = umlDiagram;
+  let componentDiagram = umlDiagram;
+  let sequenceDiagram = umlDiagram;
+  let classDiagram = umlDiagram;
   
   // Only generate diagrams if we don't have them from the backend
   if (!umlDiagram) {
@@ -129,7 +134,10 @@ export const generateArchitectureRecommendation = async (
     searchResults, 
     diagrams: {
       flowchart: flowchartDiagram,
-      useCase: useCaseDiagram
+      useCase: useCaseDiagram,
+      component: componentDiagram,
+      sequence: sequenceDiagram,
+      class: classDiagram
     }
   };
 };

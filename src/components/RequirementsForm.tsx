@@ -1,3 +1,4 @@
+
 import { ReactNode, useState } from 'react';
 import { 
   Card, 
@@ -99,6 +100,8 @@ const RequirementsForm = ({ onSubmit }: RequirementsFormProps) => {
       projectType: "",
       description: "",
       scalability: "medium",
+      budget: "",
+      timeConstraints: "",
       features: [],
       customRequirements: "",
     },
@@ -211,6 +214,50 @@ const RequirementsForm = ({ onSubmit }: RequirementsFormProps) => {
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="budget"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Budget</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter your budget (e.g., $10,000)" 
+                          {...field} 
+                          className="hover-input"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Enter your project budget
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="timeConstraints"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Timeline</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter timeline (e.g., 3 months)" 
+                          {...field} 
+                          className="hover-input"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Enter your project timeline
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}

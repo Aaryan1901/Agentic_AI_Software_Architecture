@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -38,13 +37,13 @@ const RequirementsPage = () => {
     projectType: "web",
     description: projectIdea,
     scale: "medium",
-    budget: "medium",
-    timeConstraints: "medium",
+    budget: "",
+    timeConstraints: "",
     security: "standard",
     features: [],
     customRequirements: "",
     scalability: "medium", // Added the missing scalability field
-    timeline: "medium",    // Added timeline which maps to timeConstraints
+    timeline: "",    // Added timeline which maps to timeConstraints
     additionalRequirements: "" // Added additionalRequirements which maps to customRequirements
   });
 
@@ -223,7 +222,7 @@ const RequirementsPage = () => {
                             onValueChange={(value) => handleSelectChange('scale', value)}
                           >
                             <SelectTrigger id="scale" className="border-architect-vibrant/30 focus:border-architect-vibrant transition-all duration-300">
-                              <SelectValue placeholder="Select scale" />
+                              <SelectValue placeholder="Select expected scale" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="small">Small (Hundreds of users)</SelectItem>
@@ -237,38 +236,28 @@ const RequirementsPage = () => {
                           <label htmlFor="budget" className="text-sm font-medium flex items-center gap-1">
                             <CreditCard className="h-4 w-4 text-architect-vibrant" /> Budget
                           </label>
-                          <Select 
-                            value={requirements.budget} 
-                            onValueChange={(value) => handleSelectChange('budget', value)}
-                          >
-                            <SelectTrigger id="budget" className="border-architect-vibrant/30 focus:border-architect-vibrant transition-all duration-300">
-                              <SelectValue placeholder="Select budget level" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="low">Low (Minimal cost)</SelectItem>
-                              <SelectItem value="medium">Medium (Moderate investment)</SelectItem>
-                              <SelectItem value="high">High (Enterprise level)</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <Input
+                            id="budget"
+                            name="budget"
+                            value={requirements.budget}
+                            onChange={handleInputChange}
+                            placeholder="Enter budget (e.g., $10,000)"
+                            className="border-architect-vibrant/30 focus:border-architect-vibrant transition-all duration-300"
+                          />
                         </div>
                         
                         <div className="space-y-2">
                           <label htmlFor="timeConstraints" className="text-sm font-medium flex items-center gap-1">
                             <Clock className="h-4 w-4 text-architect-vibrant" /> Timeline
                           </label>
-                          <Select 
-                            value={requirements.timeConstraints} 
-                            onValueChange={(value) => handleSelectChange('timeConstraints', value)}
-                          >
-                            <SelectTrigger id="timeConstraints" className="border-architect-vibrant/30 focus:border-architect-vibrant transition-all duration-300">
-                              <SelectValue placeholder="Select time constraints" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="low">Low (No rush)</SelectItem>
-                              <SelectItem value="medium">Medium (Standard timeline)</SelectItem>
-                              <SelectItem value="high">High (Urgent)</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <Input
+                            id="timeConstraints"
+                            name="timeConstraints"
+                            value={requirements.timeConstraints}
+                            onChange={handleInputChange}
+                            placeholder="Enter timeline (e.g., 3 months)"
+                            className="border-architect-vibrant/30 focus:border-architect-vibrant transition-all duration-300"
+                          />
                         </div>
                       </div>
                     </div>
