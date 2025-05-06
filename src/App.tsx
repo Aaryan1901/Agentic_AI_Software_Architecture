@@ -11,6 +11,7 @@ import ProjectInput from "./pages/ProjectInput";
 import RequirementsPage from "./pages/RequirementsPage";
 import ResultsPage from "./pages/ResultsPage";
 import HeroLandingPage from "./pages/HeroLandingPage";
+import BackendSetupPage from "./pages/BackendSetupPage";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,9 @@ const PageTitleUpdater = () => {
         break;
       case '/results':
         title = "Architecture Results - DesignPanda";
+        break;
+      case '/backend-setup':
+        title = "Backend Setup - DesignPanda";
         break;
       default:
         if (location.pathname !== '/') {
@@ -58,6 +62,7 @@ const App = () => (
           <Route path="/input" element={<ProjectInput />} />
           <Route path="/requirements" element={<RequirementsPage />} />
           <Route path="/results" element={<ResultsPage />} />
+          <Route path="/backend-setup" element={<BackendSetupPage />} />
           <Route path="/original" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
