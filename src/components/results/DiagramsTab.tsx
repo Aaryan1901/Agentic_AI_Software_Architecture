@@ -17,6 +17,9 @@ const DiagramsTab: React.FC<DiagramsTabProps> = ({
   setDiagramTab, 
   renderDiagram 
 }) => {
+  // Check if we have diagrams available from the backend
+  const hasDiagrams = recommendation.diagrams && Object.values(recommendation.diagrams).some(diagram => !!diagram);
+
   return (
     <Card>
       <CardContent className="pt-6">
@@ -63,7 +66,12 @@ const DiagramsTab: React.FC<DiagramsTabProps> = ({
         
         <div className="flex justify-center p-4 bg-white rounded border">
           <div className="w-full">
-            {renderDiagram()}
+            {hasDiagrams ? renderDiagram() : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No diagram available for this architecture type.</p>
+                <p className="text-sm mt-2">Try selecting a different diagram type or generating a new architecture.</p>
+              </div>
+            )}
           </div>
         </div>
         
@@ -71,7 +79,7 @@ const DiagramsTab: React.FC<DiagramsTabProps> = ({
           <div className="mt-6 border p-3 rounded-md bg-gray-50">
             <h4 className="text-sm font-medium mb-2">PlantUML Code</h4>
             <pre className="text-xs overflow-auto p-2 bg-gray-100 rounded">
-              {recommendation.diagrams[diagramTab as keyof typeof recommendation.diagrams]?.plantUmlCode}
+              {recommendation.diagrams[diagramTab as keyof typeof recommendation.diagrams]?.plantUmlCode || 'No PlantUML code available'}
             </pre>
           </div>
         )}
