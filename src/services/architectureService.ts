@@ -21,6 +21,13 @@ export const generateArchitectureRecommendation = async (
   let architectureDescription = null;
   try {
     toast.info("Connecting to AI agent backend...");
+    // Get the backend URL from localStorage
+    const backendUrl = localStorage.getItem('backendUrl');
+    if (!backendUrl) {
+      toast.warning("Backend URL not configured. Using default: http://localhost:8000");
+      localStorage.setItem('backendUrl', 'http://localhost:8000');
+    }
+    
     architectureDescription = await getAIAgentRecommendation(requirements);
     
     if (architectureDescription) {
