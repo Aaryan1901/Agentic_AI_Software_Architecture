@@ -20,10 +20,7 @@ const BackendSetup: React.FC = () => {
   
   const saveBackendUrl = () => {
     localStorage.setItem('backendUrl', backendUrl);
-    
     toast.success("Backend URL saved");
-    
-    // Check connection
     checkConnection();
   };
   
@@ -31,8 +28,21 @@ const BackendSetup: React.FC = () => {
     try {
       const url = localStorage.getItem('backendUrl') || 'http://localhost:8000';
       
-      // Test with a direct fetch to the execute endpoint with a simple test payload
-      // Since we know the /health endpoint doesn't exist from the logs
+      // First try a simple GET request to the root endpoint
+      toast.info("Testing connection to backend...");
+      
+      const response = await fetch(`${url}/`, { 
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (response.ok) {
+        setIsConnected(true);
+        toast.success("Connected to AI Agent backend");
+        return;
+      }
+
+      // If that fails, try the execute endpoint with minimal data
       const testPayload = {
         user_idea: "Test connection",
         project_type: "test",
@@ -45,15 +55,13 @@ const BackendSetup: React.FC = () => {
         additional_requirements: "None"
       };
       
-      toast.info("Testing connection to backend...");
-      
-      const response = await fetch(`${url}/execute`, { 
+      const executeResponse = await fetch(`${url}/execute`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(testPayload)
       });
       
-      if (response.ok) {
+      if (executeResponse.ok) {
         setIsConnected(true);
         toast.success("Connected to AI Agent backend");
       } else {
@@ -87,7 +95,7 @@ const BackendSetup: React.FC = () => {
             />
             <p className="text-xs text-muted-foreground">
               Enter the URL where your Python FastAPI backend is running.
-              By default, FastAPI runs on http://localhost:8000
+              The URL should match the one shown in your terminal: {backendUrl}
             </p>
           </div>
           
@@ -96,6 +104,15 @@ const BackendSetup: React.FC = () => {
             <p className="text-sm">
               {isConnected ? 'Connected to backend' : 'Not connected to backend'}
             </p>
+          </div>
+
+          <div className="text-xs text-muted-foreground">
+            <p>Make sure your Python backend has CORS enabled to accept requests from this website.</p>
+            <p>The backend should have these endpoints:</p>
+            <ul className="list-disc list-inside ml-2 mt-1">
+              <li>GET / - A simple health check endpoint</li>
+              <li>POST /execute - The main endpoint that processes architecture requests</li>
+            </ul>
           </div>
         </div>
       </CardContent>

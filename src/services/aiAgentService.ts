@@ -1,6 +1,7 @@
 
 import { ProjectRequirements } from '@/components/RequirementsForm';
 import { toast } from "sonner";
+import { BackendResponse } from '@/components/results/ResultsHelpers';
 
 // Interface for the request to the Python backend
 export interface AIAgentRequest {
@@ -15,11 +16,6 @@ export interface AIAgentRequest {
   additional_requirements: string;
 }
 
-// Interface for the response from the Python backend
-export interface AIAgentResponse {
-  architecture: string;
-}
-
 /**
  * Converts our frontend ProjectRequirements to the format expected by the AI agent backend
  */
@@ -32,10 +28,15 @@ export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAg
     'enterprise': 'Enterprise (Global scale)'
   };
 
-  // Convert features array to strings if it's not already
-  const features = requirements.features.map(feature => 
-    typeof feature === 'string' ? feature : feature.toString()
-  );
+  // Convert features array to strings
+  const features = requirements.features.map(feature => {
+    if (typeof feature === 'string') {
+      return feature;
+    } else if (feature && typeof feature === 'object' && 'toString' in feature) {
+      return feature.toString();
+    }
+    return 'Feature';
+  });
 
   return {
     user_idea: requirements.projectName,
@@ -43,17 +44,17 @@ export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAg
     project_description: requirements.description || "No description provided",
     scale: scaleMap[requirements.scale] || requirements.scale,
     budget: requirements.budget || "Not specified",
-    project_duration: requirements.timeConstraints || "Not specified", // Using timeConstraints instead of timeline
+    project_duration: requirements.timeConstraints || "Not specified", 
     security_requirements: requirements.security || "Standard security measures",
     key_features: features,
-    additional_requirements: requirements.customRequirements || "None" // Using customRequirements instead of additionalRequirements
+    additional_requirements: requirements.customRequirements || "None"
   };
 };
 
 /**
  * Sends project requirements to the AI agent backend and returns the architecture recommendation
  */
-export const getAIAgentRecommendation = async (requirements: ProjectRequirements): Promise<string> => {
+export const getAIAgentRecommendation = async (requirements: ProjectRequirements): Promise<BackendResponse | null> => {
   try {
     // Convert requirements to the format expected by the backend
     const requestData = convertToAIAgentRequest(requirements);
@@ -78,12 +79,12 @@ export const getAIAgentRecommendation = async (requirements: ProjectRequirements
       throw new Error(`Backend responded with status: ${response.status}`);
     }
     
-    const data = await response.json() as AIAgentResponse;
+    const data = await response.json() as BackendResponse;
     console.log("Received from AI Agent backend:", data);
     
     toast.success("Architecture generated using AI agent backend");
     
-    return data.architecture;
+    return data;
   } catch (error) {
     console.error("Error connecting to AI agent backend:", error);
     toast.error("Could not connect to AI backend. Using fallback architecture generation.");
