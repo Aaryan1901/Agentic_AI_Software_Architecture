@@ -79,7 +79,15 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ recommendation, renderDiagram
             <div className="space-y-4">
               {recommendation.deployment.map((option, index) => {
                 // Use default values if metrics is undefined
-                const metrics = option.metrics || { costEfficiency: 'Medium', scalability: 'High', complexity: 'Low' };
+                const metrics: DeploymentMetrics = option.metrics || {
+                  performance: 70,
+                  scalability: 70,
+                  cost: 70,
+                  maintenance: 70,
+                  security: 70,
+                  costEfficiency: 'Medium',
+                  complexity: 'Medium'
+                };
                 
                 return (
                   <div key={`analysis-${index}`} className="flex flex-col">

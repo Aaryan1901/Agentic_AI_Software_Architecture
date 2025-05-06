@@ -1,9 +1,11 @@
+
 import { ProjectRequirements } from '@/components/RequirementsForm';
 import { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
 import { searchProjectInformation, SearchResult, LLMModel } from './searchService';
 import { generateDiagramFromRequirements } from './diagramService';
 import { getAIAgentRecommendation } from './aiAgentService';
 import { toast } from "sonner";
+import { BackendResponse } from '@/components/results/ResultsHelpers';
 
 // This function generates architecture recommendations, now with support for the external AI agent
 export const generateArchitectureRecommendation = async (
@@ -16,7 +18,10 @@ export const generateArchitectureRecommendation = async (
   console.log("Using LLM model:", selectedModel);
   
   // First, try to use the AI agent backend if available
+  let backendResponse: BackendResponse | null = null;
   let architectureDescription = null;
+  let umlDiagram = null;
+  
   try {
     toast.info("Connecting to AI agent backend...");
     // Get the backend URL from localStorage
@@ -26,11 +31,19 @@ export const generateArchitectureRecommendation = async (
       localStorage.setItem('backendUrl', 'http://localhost:8000');
     }
     
-    architectureDescription = await getAIAgentRecommendation(requirements);
+    backendResponse = await getAIAgentRecommendation(requirements);
     
-    if (architectureDescription) {
+    if (backendResponse) {
       toast.success("Architecture generated using AI agent backend");
+      architectureDescription = backendResponse.architecture;
       console.log("Architecture from AI agent:", architectureDescription);
+      
+      // Store UML data if available
+      umlDiagram = {
+        plantUmlCode: backendResponse.uml_code || '',
+        svgContent: backendResponse.image_data ? 
+          `<img src="data:${backendResponse.mime_type};base64,${backendResponse.image_data}" alt="UML Diagram" style="max-width: 100%;" />` : '',
+      };
     } else {
       toast.warning("AI agent returned empty result. Using fallback method.");
     }
@@ -87,16 +100,22 @@ export const generateArchitectureRecommendation = async (
   const pros = getProsForPattern(pattern);
   const cons = getConsForPattern(pattern);
   
-  // Generate diagrams using our diagram service
-  const flowchartDiagram = await generateDiagramFromRequirements(requirements, {
-    type: 'flowchart',
-    title: `${requirements.projectName} Flow Diagram`
-  });
+  // Generate diagrams using our diagram service or use the one from the backend
+  let flowchartDiagram = umlDiagram;
+  let useCaseDiagram = umlDiagram;
   
-  const useCaseDiagram = await generateDiagramFromRequirements(requirements, {
-    type: 'usecase',
-    title: `${requirements.projectName} Use Case Diagram`
-  });
+  // Only generate diagrams if we don't have them from the backend
+  if (!umlDiagram) {
+    flowchartDiagram = await generateDiagramFromRequirements(requirements, {
+      type: 'flowchart',
+      title: `${requirements.projectName} Flow Diagram`
+    });
+    
+    useCaseDiagram = await generateDiagramFromRequirements(requirements, {
+      type: 'usecase',
+      title: `${requirements.projectName} Use Case Diagram`
+    });
+  }
 
   return {
     pattern,
@@ -104,10 +123,10 @@ export const generateArchitectureRecommendation = async (
     frameworks,
     libraries,
     deployment,
-    diagram: 'placeholder', // No longer used directly, we have specific diagrams now
+    diagram: 'placeholder', 
     pros,
     cons,
-    searchResults, // Include the search results in the recommendation
+    searchResults, 
     diagrams: {
       flowchart: flowchartDiagram,
       useCase: useCaseDiagram

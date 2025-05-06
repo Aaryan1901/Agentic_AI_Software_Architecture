@@ -33,6 +33,8 @@ export interface DeploymentMetrics {
   cost: number;
   maintenance: number;
   security: number;
+  costEfficiency?: string;
+  complexity?: string;
 }
 
 export interface DeploymentOption {
@@ -40,6 +42,13 @@ export interface DeploymentOption {
   description: string;
   costEstimate: string;
   metrics?: DeploymentMetrics;
+}
+
+export interface BackendResponse {
+  architecture: string;
+  uml_code?: string;
+  image_data?: string;
+  mime_type?: string;
 }
 
 export const generateDeploymentMetrics = (option: string): DeploymentMetrics => {
