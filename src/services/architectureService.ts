@@ -1,11 +1,9 @@
-
 import { ProjectRequirements } from '@/components/RequirementsForm';
 import { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
 import { searchProjectInformation, SearchResult, LLMModel } from './searchService';
 import { generateDiagramFromRequirements } from './diagramService';
 import { getAIAgentRecommendation } from './aiAgentService';
 import { toast } from "sonner";
-import { DeploymentMetrics } from '@/components/results/ResultsHelpers';
 
 // This function generates architecture recommendations, now with support for the external AI agent
 export const generateArchitectureRecommendation = async (
@@ -32,6 +30,9 @@ export const generateArchitectureRecommendation = async (
     
     if (architectureDescription) {
       toast.success("Architecture generated using AI agent backend");
+      console.log("Architecture from AI agent:", architectureDescription);
+    } else {
+      toast.warning("AI agent returned empty result. Using fallback method.");
     }
   } catch (error) {
     console.error("Error using AI agent backend:", error);
