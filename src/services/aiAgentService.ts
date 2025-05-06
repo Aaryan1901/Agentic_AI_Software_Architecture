@@ -38,10 +38,10 @@ export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAg
     project_description: requirements.description || "No description provided",
     scale: scaleMap[requirements.scale] || requirements.scale,
     budget: requirements.budget || "Not specified",
-    project_duration: requirements.timeline || "Not specified",
+    project_duration: requirements.timeConstraints || "Not specified", // Using timeConstraints instead of timeline
     security_requirements: requirements.security || "Standard security measures",
     key_features: requirements.features || [],
-    additional_requirements: requirements.additionalRequirements || "None"
+    additional_requirements: requirements.customRequirements || "None" // Using customRequirements instead of additionalRequirements
   };
 };
 
@@ -54,8 +54,11 @@ export const getAIAgentRecommendation = async (requirements: ProjectRequirements
     const requestData = convertToAIAgentRequest(requirements);
     console.log("Sending to AI Agent backend:", requestData);
     
-    // The URL of your FastAPI backend
-    const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
+    // The URL of your local backend
+    const BACKEND_URL = localStorage.getItem('backendUrl') || "http://localhost:8000";
+    
+    // Notify user about connecting to backend
+    toast.info("Connecting to AI agent backend...");
     
     // Send request to the backend
     const response = await fetch(`${BACKEND_URL}/execute`, {
@@ -72,6 +75,8 @@ export const getAIAgentRecommendation = async (requirements: ProjectRequirements
     
     const data = await response.json() as AIAgentResponse;
     console.log("Received from AI Agent backend:", data);
+    
+    toast.success("Architecture generated using AI agent backend");
     
     return data.architecture;
   } catch (error) {

@@ -50,6 +50,16 @@ const PageTitleUpdater = () => {
   return null;
 };
 
+// Initialize backend URL in localStorage if not set
+const initializeBackendUrl = () => {
+  if (!localStorage.getItem('backendUrl')) {
+    localStorage.setItem('backendUrl', 'http://localhost:8000');
+  }
+};
+
+// Call initialization function
+initializeBackendUrl();
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>

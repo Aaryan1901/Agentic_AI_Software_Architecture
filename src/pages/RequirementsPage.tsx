@@ -42,18 +42,37 @@ const RequirementsPage = () => {
     timeConstraints: "medium",
     security: "standard",
     features: [],
-    customRequirements: ""
+    customRequirements: "",
+    scalability: "medium", // Added the missing scalability field
+    timeline: "medium",    // Added timeline which maps to timeConstraints
+    additionalRequirements: "" // Added additionalRequirements which maps to customRequirements
   });
 
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setRequirements(prev => ({ ...prev, [name]: value }));
+    
+    // Also update the corresponding fields for the Python backend
+    if (name === 'timeConstraints') {
+      setRequirements(prev => ({ ...prev, timeline: value }));
+    }
+    if (name === 'customRequirements') {
+      setRequirements(prev => ({ ...prev, additionalRequirements: value }));
+    }
   };
 
   // Handle select changes
   const handleSelectChange = (name: string, value: string) => {
     setRequirements(prev => ({ ...prev, [name]: value }));
+    
+    // Also update the corresponding fields for the Python backend
+    if (name === 'scale') {
+      setRequirements(prev => ({ ...prev, scalability: value }));
+    }
+    if (name === 'timeConstraints') {
+      setRequirements(prev => ({ ...prev, timeline: value }));
+    }
   };
 
   // Handle feature checkboxes
@@ -74,8 +93,16 @@ const RequirementsPage = () => {
       return;
     }
     
+    // Synchronize fields before storing
+    const updatedRequirements = {
+      ...requirements,
+      timeline: requirements.timeConstraints,
+      additionalRequirements: requirements.customRequirements,
+      scalability: requirements.scale
+    };
+    
     // Store requirements in session storage
-    sessionStorage.setItem('projectRequirements', JSON.stringify(requirements));
+    sessionStorage.setItem('projectRequirements', JSON.stringify(updatedRequirements));
     
     setLoading(true);
     setTimeout(() => {
