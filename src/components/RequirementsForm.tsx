@@ -1,4 +1,3 @@
-
 import { ReactNode, useState } from 'react';
 import { 
   Card, 
@@ -43,7 +42,9 @@ export interface ProjectRequirements {
   security?: string;
   features: string[];
   customRequirements?: string;
-  scalability: string; // Added the missing property
+  scalability?: string;
+  timeline?: string;    
+  additionalRequirements?: string;
 }
 
 export interface RequirementsFormProps {

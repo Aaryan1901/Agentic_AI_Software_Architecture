@@ -20,10 +20,6 @@ const BackendSetup: React.FC = () => {
   
   const saveBackendUrl = () => {
     localStorage.setItem('backendUrl', backendUrl);
-    // Set in process.env for the current session
-    (window as any).process = (window as any).process || {};
-    (window as any).process.env = (window as any).process.env || {};
-    (window as any).process.env.BACKEND_URL = backendUrl;
     
     toast.success("Backend URL saved");
     
@@ -34,9 +30,27 @@ const BackendSetup: React.FC = () => {
   const checkConnection = async () => {
     try {
       const url = localStorage.getItem('backendUrl') || 'http://localhost:8000';
-      const response = await fetch(`${url}/health`, { 
-        method: 'GET',
+      
+      // Test with a direct fetch to the execute endpoint with a simple test payload
+      // Since we know the /health endpoint doesn't exist from the logs
+      const testPayload = {
+        user_idea: "Test connection",
+        project_type: "test",
+        project_description: "Testing connection to backend",
+        scale: "small",
+        budget: "low",
+        project_duration: "1",
+        security_requirements: "standard",
+        key_features: ["test"],
+        additional_requirements: "None"
+      };
+      
+      toast.info("Testing connection to backend...");
+      
+      const response = await fetch(`${url}/execute`, { 
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testPayload)
       });
       
       if (response.ok) {

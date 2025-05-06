@@ -26,11 +26,16 @@ export interface AIAgentResponse {
 export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAgentRequest => {
   // Map the project scale to the format expected by the backend
   const scaleMap: Record<string, string> = {
-    'low': 'Small (Hundreds of users)',
+    'small': 'Small (Hundreds of users)',
     'medium': 'Medium (Thousands of users)',
-    'high': 'Large (Millions of users)',
+    'large': 'Large (Millions of users)',
     'enterprise': 'Enterprise (Global scale)'
   };
+
+  // Convert features array to strings if it's not already
+  const features = requirements.features.map(feature => 
+    typeof feature === 'string' ? feature : feature.toString()
+  );
 
   return {
     user_idea: requirements.projectName,
@@ -40,7 +45,7 @@ export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAg
     budget: requirements.budget || "Not specified",
     project_duration: requirements.timeConstraints || "Not specified", // Using timeConstraints instead of timeline
     security_requirements: requirements.security || "Standard security measures",
-    key_features: requirements.features || [],
+    key_features: features,
     additional_requirements: requirements.customRequirements || "None" // Using customRequirements instead of additionalRequirements
   };
 };
