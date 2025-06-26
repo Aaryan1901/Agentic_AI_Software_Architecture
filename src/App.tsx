@@ -53,7 +53,7 @@ const PageTitleUpdater = () => {
 // Initialize backend URL in localStorage if not set
 const initializeBackendUrl = () => {
   if (!localStorage.getItem('backendUrl')) {
-    localStorage.setItem('backendUrl', 'http://localhost:8000');
+    localStorage.setItem('backendUrl', 'http://localhost:8000/execute');
   }
 };
 
