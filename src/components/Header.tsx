@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -12,29 +11,22 @@ const Header: React.FC = () => {
       <div className="container flex h-16 items-center justify-between py-4">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
-            <motion.div
-              whileHover={{ rotate: 5, scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300, damping: 10 }}
-            >
+            <div className="hover:rotate-12 hover:scale-105 transition-transform duration-200">
               <img 
                 src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
                 alt="DesignPanda Logo" 
                 className="h-9 w-9 object-contain rounded-full bg-white shadow-sm" 
               />
-            </motion.div>
-            <motion.h1 
-              className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-architect-dark to-architect"
-              whileHover={{ scale: 1.03 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
+            </div>
+            <h1 className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-architect-dark to-architect hover:scale-105 transition-transform duration-200">
               DesignPanda
-            </motion.h1>
+            </h1>
           </Link>
         </div>
         
         <div className="flex items-center gap-4">
           <nav className="items-center gap-4 hidden md:flex">
-            <PageLink to="/" label="Project Input" currentPath={location.pathname} />
+            <PageLink to="/input" label="Project Input" currentPath={location.pathname} />
             <PageLink to="/requirements" label="Requirements" currentPath={location.pathname} />
             <PageLink to="/results" label="Results" currentPath={location.pathname} />
             <Button variant="outline" size="sm">Login</Button>
@@ -70,12 +62,7 @@ const PageLink = ({ to, label, currentPath }: { to: string; label: string; curre
     >
       {label}
       {isActive && (
-        <motion.span 
-          className="absolute -bottom-[22px] left-0 right-0 h-[2px] bg-architect" 
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.3 }}
-        />
+        <span className="absolute -bottom-[22px] left-0 right-0 h-[2px] bg-architect animate-pulse" />
       )}
     </Link>
   );
