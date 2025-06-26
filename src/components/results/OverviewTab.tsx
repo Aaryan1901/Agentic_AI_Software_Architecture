@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
 import { Button } from '@/components/ui/button';
-import { DeploymentMetrics } from './ResultsHelpers';
+import { DeploymentMetrics, generateDeploymentMetrics } from './ResultsHelpers';
 
 interface OverviewTabProps {
   recommendation: ArchitectureRecommendation;
@@ -78,16 +78,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ recommendation, renderDiagram
             <h2 className="text-lg font-bold mb-4">Deployment Analysis</h2>
             <div className="space-y-4">
               {recommendation.deployment.map((option, index) => {
-                // Use default values if metrics is undefined
-                const metrics: DeploymentMetrics = option.metrics || {
-                  performance: 70,
-                  scalability: 70,
-                  cost: 70,
-                  maintenance: 70,
-                  security: 70,
-                  costEfficiency: 'Medium',
-                  complexity: 'Medium'
-                };
+                // Generate metrics for this deployment option
+                const metrics: DeploymentMetrics = generateDeploymentMetrics(option.name);
                 
                 return (
                   <div key={`analysis-${index}`} className="flex flex-col">
@@ -104,11 +96,11 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ recommendation, renderDiagram
                       </div>
                       <div className="flex justify-between mb-1">
                         <span>Scalability</span>
-                        <span className="font-medium">{metrics.scalability || "High"}</span>
+                        <span className="font-medium">{metrics.scalability || 70}%</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Setup complexity</span>
-                        <span className="font-medium">{metrics.complexity || "Low"}</span>
+                        <span className="font-medium">{metrics.complexity || "Medium"}</span>
                       </div>
                     </div>
                     {index < recommendation.deployment.length - 1 && <Separator className="my-2" />}
