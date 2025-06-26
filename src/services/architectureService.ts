@@ -2,7 +2,7 @@
 import { ProjectRequirements } from '@/components/RequirementsForm';
 import { ArchitectureRecommendation } from '@/components/ArchitectureDisplay';
 import { searchProjectInformation } from './searchService';
-import { generateDiagram } from './diagramService';
+import { generateDiagramFromRequirements, DiagramOptions } from './diagramService';
 import { getAIAgentRecommendation } from './aiAgentService';
 
 // Helper function to convert UML code to SVG (placeholder implementation)
@@ -31,23 +31,28 @@ export const generateArchitectureRecommendation = async (
       const diagrams = {
         flowchart: {
           svgContent: convertUMLToSVG(backendResponse.uml_code),
-          plantUmlCode: backendResponse.uml_code
+          plantUmlCode: backendResponse.uml_code,
+          diagramType: 'flowchart'
         },
         useCase: {
           svgContent: convertUMLToSVG(backendResponse.uml_code),
-          plantUmlCode: backendResponse.uml_code
+          plantUmlCode: backendResponse.uml_code,
+          diagramType: 'usecase'
         },
         component: {
           svgContent: convertUMLToSVG(backendResponse.uml_code),
-          plantUmlCode: backendResponse.uml_code
+          plantUmlCode: backendResponse.uml_code,
+          diagramType: 'component'
         },
         sequence: {
           svgContent: convertUMLToSVG(backendResponse.uml_code),
-          plantUmlCode: backendResponse.uml_code
+          plantUmlCode: backendResponse.uml_code,
+          diagramType: 'sequence'
         },
         class: {
           svgContent: convertUMLToSVG(backendResponse.uml_code),
-          plantUmlCode: backendResponse.uml_code
+          plantUmlCode: backendResponse.uml_code,
+          diagramType: 'class'
         }
       };
 
@@ -80,26 +85,56 @@ const extractPattern = (architecture: string): string => {
 };
 
 // Helper function to extract frameworks from architecture description
-const extractFrameworks = (architecture: string): Array<{name: string, description: string}> => {
+const extractFrameworks = (architecture: string): Array<{name: string, description: string, url: string, popularity: number}> => {
   const frameworks = [];
   
   if (architecture.toLowerCase().includes('react')) {
-    frameworks.push({name: 'React', description: 'Frontend framework for building user interfaces'});
+    frameworks.push({
+      name: 'React', 
+      description: 'Frontend framework for building user interfaces',
+      url: 'https://reactjs.org/',
+      popularity: 95
+    });
   }
   if (architecture.toLowerCase().includes('node')) {
-    frameworks.push({name: 'Node.js', description: 'JavaScript runtime for backend development'});
+    frameworks.push({
+      name: 'Node.js', 
+      description: 'JavaScript runtime for backend development',
+      url: 'https://nodejs.org/',
+      popularity: 90
+    });
   }
   if (architecture.toLowerCase().includes('python')) {
-    frameworks.push({name: 'Python', description: 'Backend programming language'});
+    frameworks.push({
+      name: 'Python', 
+      description: 'Backend programming language',
+      url: 'https://python.org/',
+      popularity: 88
+    });
   }
   if (architecture.toLowerCase().includes('database')) {
-    frameworks.push({name: 'Database', description: 'Data storage and management system'});
+    frameworks.push({
+      name: 'Database', 
+      description: 'Data storage and management system',
+      url: 'https://www.postgresql.org/',
+      popularity: 85
+    });
   }
   
   // Add default frameworks if none detected
   if (frameworks.length === 0) {
-    frameworks.push({name: 'Web Framework', description: 'Modern web application framework'});
-    frameworks.push({name: 'Database', description: 'Scalable database solution'});
+    frameworks.push({
+      name: 'Web Framework', 
+      description: 'Modern web application framework',
+      url: 'https://expressjs.com/',
+      popularity: 80
+    });
+    frameworks.push({
+      name: 'Database', 
+      description: 'Scalable database solution',
+      url: 'https://www.postgresql.org/',
+      popularity: 85
+    });
   }
   
   return frameworks;
@@ -150,17 +185,57 @@ const generateFallbackRecommendation = async (requirements: ProjectRequirements)
   }
   
   const frameworks = [
-    { name: 'Frontend Framework', description: 'Modern reactive frontend framework' },
-    { name: 'Backend API', description: 'RESTful API service layer' },
-    { name: 'Database', description: 'Scalable database solution' }
+    { 
+      name: 'Frontend Framework', 
+      description: 'Modern reactive frontend framework',
+      url: 'https://reactjs.org/',
+      popularity: 90
+    },
+    { 
+      name: 'Backend API', 
+      description: 'RESTful API service layer',
+      url: 'https://expressjs.com/',
+      popularity: 85
+    },
+    { 
+      name: 'Database', 
+      description: 'Scalable database solution',
+      url: 'https://www.postgresql.org/',
+      popularity: 88
+    }
   ];
   
   if (requirements.features.includes('auth')) {
-    frameworks.push({ name: 'Authentication Service', description: 'Secure user authentication and authorization' });
+    frameworks.push({ 
+      name: 'Authentication Service', 
+      description: 'Secure user authentication and authorization',
+      url: 'https://auth0.com/',
+      popularity: 80
+    });
   }
   
   const deployment = generateDeploymentOptions(requirements);
-  const diagrams = await generateDiagram(requirements);
+  
+  // Generate diagrams using the diagram service
+  const diagramOptions: DiagramOptions = {
+    type: 'flowchart',
+    title: `${requirements.projectName} Architecture`,
+    description: description,
+    elements: frameworks.map(f => f.name),
+    actors: ['User', 'Admin']
+  };
+  
+  const flowchartDiagram = await generateDiagramFromRequirements(requirements, diagramOptions);
+  const useCaseDiagram = await generateDiagramFromRequirements(requirements, { ...diagramOptions, type: 'usecase' });
+  const componentDiagram = await generateDiagramFromRequirements(requirements, { ...diagramOptions, type: 'component' });
+  
+  const diagrams = {
+    flowchart: flowchartDiagram,
+    useCase: useCaseDiagram,
+    component: componentDiagram,
+    sequence: await generateDiagramFromRequirements(requirements, { ...diagramOptions, type: 'sequence' }),
+    class: await generateDiagramFromRequirements(requirements, { ...diagramOptions, type: 'class' })
+  };
   
   return {
     pattern,
