@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 const BackendSetup: React.FC = () => {
   const [backendUrl, setBackendUrl] = useState<string>(() => {
-    return localStorage.getItem('backendUrl') || 'http://localhost:8000';
+    return localStorage.getItem('backendUrl') || 'http://127.0.0.1:8000';
   });
   
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -26,7 +26,7 @@ const BackendSetup: React.FC = () => {
   
   const checkConnection = async () => {
     try {
-      const url = localStorage.getItem('backendUrl') || 'http://localhost:8000';
+      const url = localStorage.getItem('backendUrl') || 'http://127.0.0.1:8000';
       
       // First try a simple GET request to the root endpoint
       toast.info("Testing connection to backend...");
@@ -89,13 +89,13 @@ const BackendSetup: React.FC = () => {
             <Label htmlFor="backendUrl">Backend URL</Label>
             <Input
               id="backendUrl"
-              placeholder="http://localhost:8000"
+              placeholder="http://127.0.0.1:8000"
               value={backendUrl}
               onChange={(e) => setBackendUrl(e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
               Enter the URL where your Python FastAPI backend is running.
-              The URL should match the one shown in your terminal: {backendUrl}
+              Your backend is running on: http://127.0.0.1:8000
             </p>
           </div>
           

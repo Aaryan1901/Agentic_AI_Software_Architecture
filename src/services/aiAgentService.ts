@@ -1,7 +1,6 @@
 
 import { ProjectRequirements } from '@/components/RequirementsForm';
 import { toast } from "sonner";
-import { BackendResponse } from '@/components/results/ResultsHelpers';
 
 // Interface for the request to the Python backend
 export interface AIAgentRequest {
@@ -14,6 +13,12 @@ export interface AIAgentRequest {
   security_requirements: string;
   key_features: string[];
   additional_requirements: string;
+}
+
+// Interface for the backend response
+export interface BackendResponse {
+  architecture: string;
+  uml_code: string;
 }
 
 /**
@@ -58,8 +63,8 @@ export const getAIAgentRecommendation = async (requirements: ProjectRequirements
     const requestData = convertToAIAgentRequest(requirements);
     console.log("Sending to AI Agent backend:", requestData);
     
-    // The URL of your local backend
-    const BACKEND_URL = localStorage.getItem('backendUrl') || "http://localhost:8000";
+    // The URL of your backend (using 127.0.0.1 to match your server)
+    const BACKEND_URL = localStorage.getItem('backendUrl') || "http://127.0.0.1:8000";
     
     // Notify user about connecting to backend
     toast.info("Connecting to AI agent backend...");
@@ -85,7 +90,7 @@ export const getAIAgentRecommendation = async (requirements: ProjectRequirements
     return data;
   } catch (error) {
     console.error("Error connecting to AI agent backend:", error);
-    toast.error("Could not connect to AI backend. Using fallback architecture generation.");
+    toast.error("Could not connect to AI backend. Please check if your backend is running on http://127.0.0.1:8000");
     
     // Return null to indicate we should use fallback method
     return null;
