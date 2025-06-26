@@ -70,7 +70,7 @@ const Index = () => {
           >
             <div className="absolute inset-0 bg-white/30 rounded-full filter blur-xl"></div>
             <img 
-              src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
+              src="/logo/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
               alt="DesignPanda Logo" 
               className="w-32 h-32 object-contain relative z-10" 
             />
@@ -178,7 +178,7 @@ const Index = () => {
         <div className="container flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">
             <img 
-              src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
+              src="/logo/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
               alt="DesignPanda Logo" 
               className="h-5 w-5 object-contain" 
             />

@@ -1,98 +1,128 @@
-
 import { ProjectRequirements } from '@/components/RequirementsForm';
 import { toast } from "sonner";
 
-// Interface for the request to the Python backend
 export interface AIAgentRequest {
   user_idea: string;
+  project_name: string;
   project_type: string;
   project_description: string;
   scale: string;
   budget: string;
-  project_duration: string;
+  project_duration: number;
   security_requirements: string;
   key_features: string[];
   additional_requirements: string;
 }
 
-// Interface for the backend response
 export interface BackendResponse {
   architecture: string;
   uml_code: string;
+  image_data: string;  // base64 encoded image (may be empty)
+  mime_type: string;   // e.g. "image/png" or empty
 }
 
-/**
- * Converts our frontend ProjectRequirements to the format expected by the AI agent backend
- */
+export interface BackendError {
+  detail?: string;
+  error?: string;
+  message?: string;
+}
+
 export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAgentRequest => {
-  // Map the project scale to the format expected by the backend
   const scaleMap: Record<string, string> = {
-    'small': 'Small (Hundreds of users)',
-    'medium': 'Medium (Thousands of users)',
-    'large': 'Large (Millions of users)',
-    'enterprise': 'Enterprise (Global scale)'
+    'small': 'Small',
+    'medium': 'Medium',
+    'large': 'Large',
+    'enterprise': 'Enterprise'
   };
 
-  // Convert features array to strings
-  const features = requirements.features.map(feature => {
-    if (typeof feature === 'string') {
-      return feature;
-    }
-    return 'Feature';
-  });
+  const duration = requirements.timeConstraints 
+    ? parseInt(requirements.timeConstraints) 
+    : 3; // default 3 months
 
   return {
     user_idea: requirements.projectName,
+    project_name: requirements.projectName,
     project_type: requirements.projectType,
     project_description: requirements.description || "No description provided",
     scale: scaleMap[requirements.scale] || requirements.scale,
     budget: requirements.budget || "Not specified",
-    project_duration: requirements.timeConstraints || "Not specified", 
+    project_duration: duration,
     security_requirements: requirements.security || "Standard security measures",
-    key_features: features,
+    key_features: requirements.features,
     additional_requirements: requirements.customRequirements || "None"
   };
 };
 
-/**
- * Sends project requirements to the AI agent backend and returns the architecture recommendation
- */
-export const getAIAgentRecommendation = async (requirements: ProjectRequirements): Promise<BackendResponse | null> => {
+export const getAIAgentRecommendation = async (
+  requirements: ProjectRequirements
+): Promise<BackendResponse | null> => {
   try {
-    // Convert requirements to the format expected by the backend
     const requestData = convertToAIAgentRequest(requirements);
     console.log("Sending to AI Agent backend:", requestData);
     
-    // The URL of your backend (using 127.0.0.1 to match your server)
     const BACKEND_URL = localStorage.getItem('backendUrl') || "http://127.0.0.1:8000";
     
-    // Notify user about connecting to backend
     toast.info("Connecting to AI agent backend...");
     
-    // Send request to the backend
     const response = await fetch(`${BACKEND_URL}/execute`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(requestData),
     });
     
     if (!response.ok) {
-      throw new Error(`Backend responded with status: ${response.status}`);
+      const errorData: BackendError = await response.json().catch(() => ({}));
+      console.error("Backend error response:", errorData);
+      
+      // Special handling for PlantUML errors
+      if (errorData.detail?.includes('PlantUML')) {
+        const partialResponse = await response.json();
+        toast.warning("Diagram generation failed, but architecture was created");
+        return {
+          ...partialResponse,
+          image_data: "",
+          mime_type: ""
+        };
+      }
+      
+      throw new Error(errorData.detail || `Backend error: ${response.status}`);
     }
     
-    const data = await response.json() as BackendResponse;
-    console.log("Received from AI Agent backend:", data);
+    const data: BackendResponse = await response.json();
     
-    toast.success("Architecture generated using AI agent backend");
+    // Handle case where architecture was generated but image failed
+    if ((!data.image_data || data.image_data === "") && data.architecture && data.uml_code) {
+      toast.warning("Architecture created but diagram generation failed");
+      return {
+        ...data,
+        image_data: "",
+        mime_type: ""
+      };
+    }
     
+    if (!data.architecture || !data.uml_code) {
+      throw new Error("Invalid response format from backend");
+    }
+    
+    toast.success("Architecture generated successfully");
     return data;
+    
   } catch (error) {
     console.error("Error connecting to AI agent backend:", error);
-    toast.error("Could not connect to AI backend. Please check if your backend is running on http://127.0.0.1:8000");
     
-    // Return null to indicate we should use fallback method
+    let errorMessage = "Could not connect to AI backend";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      // Special handling for PlantUML errors
+      if (error.message.includes('PlantUML')) {
+        errorMessage = "Diagram generation failed (but architecture was created)";
+      }
+    }
+    
+    toast.error(`${errorMessage}. Using fallback method...`);
     return null;
   }
 };

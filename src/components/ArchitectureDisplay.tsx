@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,10 +15,10 @@ export interface ArchitectureRecommendation {
   frameworks: Framework[];
   libraries: Library[];
   deployment: DeploymentOption[];
-  diagram: string; // This would be a diagram representation (SVG or component reference)
+  diagram: string;
   pros: string[];
   cons: string[];
-  searchResults?: SearchResult[]; // Add search results to the recommendation
+  searchResults?: SearchResult[];
   diagrams?: {
     flowchart: GeneratedDiagram;
     useCase: GeneratedDiagram;
@@ -27,25 +26,30 @@ export interface ArchitectureRecommendation {
     sequence?: GeneratedDiagram;
     class?: GeneratedDiagram;
   };
+  source?: 'ai-backend' | 'fallback'; // Added optional source property
 }
 
 interface Framework {
   name: string;
   description: string;
   url: string;
-  popularity: number; // 1-10
+  popularity: number;
+  tags?: string[]; // Added optional tags
 }
 
 interface Library {
   name: string;
   purpose: string;
   url: string;
+  tags?: string[]; // Added optional tags
 }
 
 interface DeploymentOption {
   name: string;
   description: string;
   costEstimate: string;
+  recommended?: boolean;
+  tags?: string[]; // Added optional tags
 }
 
 interface ArchitectureDisplayProps {
@@ -80,7 +84,6 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
     return null;
   }
 
-  // Function to render the PlantUML code or SVG diagram
   const renderDiagram = () => {
     if (diagramTab === "pattern") {
       return getDiagramByPattern(recommendation.pattern);
@@ -108,8 +111,6 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
       }
       
       if (diagram) {
-        // In a real application, this SVG would be generated from the PlantUML code
-        // For now, we're using the pre-generated SVG content
         return (
           <div className="flex flex-col gap-4">
             <div 
@@ -127,8 +128,17 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
       }
     }
     
-    // Fallback to pattern diagram
     return getDiagramByPattern(recommendation.pattern);
+  };
+
+  const renderSourceBadge = () => {
+    if (!recommendation.source) return null;
+    
+    return (
+      <Badge variant="outline" className="ml-2">
+        {recommendation.source === 'ai-backend' ? 'AI Generated' : 'Fallback'}
+      </Badge>
+    );
   };
 
   return (
@@ -139,6 +149,7 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
             <CardTitle className="text-architect">Architecture Recommendation</CardTitle>
             <CardDescription>
               Based on your project: <span className="font-medium">{requirements.projectName}</span>
+              {renderSourceBadge()}
             </CardDescription>
           </div>
           <Button onClick={onRefine} variant="outline" size="sm">
@@ -147,7 +158,6 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* If we have search results, show them first */}
         {recommendation.searchResults && recommendation.searchResults.length > 0 && (
           <div className="mb-4 border rounded-md p-4 bg-muted/20">
             <h3 className="text-lg font-semibold mb-2">Research Findings</h3>
@@ -199,6 +209,13 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
                   <div>
                     <h4 className="font-medium">{framework.name}</h4>
                     <p className="text-sm text-muted-foreground">{framework.description}</p>
+                    <div className="flex gap-2 mt-1">
+                      {framework.tags?.map((tag, i) => (
+                        <Badge key={i} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
                     <a 
                       href={framework.url} 
                       target="_blank" 
@@ -226,6 +243,13 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
                 <div key={index} className="p-2 border rounded-md">
                   <h4 className="font-medium">{library.name}</h4>
                   <p className="text-xs text-muted-foreground mb-1">{library.purpose}</p>
+                  <div className="flex gap-2 mb-1">
+                    {library.tags?.map((tag, i) => (
+                      <Badge key={i} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                   <a 
                     href={library.url} 
                     target="_blank" 
@@ -242,11 +266,25 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
             <div className="space-y-4">
               {recommendation.deployment.map((option, index) => (
                 <div key={index} className="flex flex-col">
-                  <div className="flex justify-between">
-                    <h4 className="font-medium">{option.name}</h4>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-medium">{option.name}</h4>
+                      {option.recommended && (
+                        <Badge variant="default" className="text-xs">
+                          Recommended
+                        </Badge>
+                      )}
+                    </div>
                     <Badge variant="outline">{option.costEstimate}</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">{option.description}</p>
+                  <div className="flex gap-2 mt-2">
+                    {option.tags?.map((tag, i) => (
+                      <Badge key={i} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                   {index < recommendation.deployment.length - 1 && <Separator className="my-2" />}
                 </div>
               ))}

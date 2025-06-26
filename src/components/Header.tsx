@@ -13,7 +13,7 @@ const Header: React.FC = () => {
           <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
             <div className="hover:rotate-12 hover:scale-105 transition-transform duration-200">
               <img 
-                src="/lovable-uploads/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
+                src="/logo/8dd62d7e-13f6-43a5-9e18-e60a61d7e086.png" 
                 alt="DesignPanda Logo" 
                 className="h-9 w-9 object-contain rounded-full bg-white shadow-sm" 
               />

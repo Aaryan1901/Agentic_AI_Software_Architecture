@@ -49,9 +49,9 @@ const ResultsPage: React.FC = () => {
             clearInterval(interval);
             return 100;
           }
-          return prev + 5;
+          return prev + 2;
         });
-      }, 300);
+      }, 950);
 
       // Generate architecture recommendation
       generateArchitectureRecommendation(parsedRequirements)
@@ -150,7 +150,7 @@ const ResultsPage: React.FC = () => {
             <h2 className="text-2xl font-bold text-center mb-6">Generating Architecture Plan</h2>
             <Progress value={progress} className="mb-4" />
             <div className="space-y-6">
-              <ProgressStep 
+             <ProgressStep 
                 step={1}
                 title="Analyzing requirements"
                 description="Evaluating project constraints and needs"
