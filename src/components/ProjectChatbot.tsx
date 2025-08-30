@@ -93,10 +93,13 @@ const ProjectChatbot = ({ initialDescription, onSuggestionsReceived }: ProjectCh
         onSuggestionsReceived(suggestions);
       }
     } catch (error) {
+      console.error('Chatbot error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         type: 'bot',
-        content: 'Sorry, I encountered an error getting suggestions. Please try again.',
+        content: `Error: ${errorMessage}. Please check your API key and try again.`,
         timestamp: new Date()
       }]);
     } finally {
