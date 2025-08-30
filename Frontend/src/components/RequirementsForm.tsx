@@ -1,5 +1,7 @@
 
 import { ReactNode, useState } from 'react';
+import ProjectChatbot from './ProjectChatbot';
+import { GroqResponse } from '@/services/groqService';
 import { 
   Card, 
   CardContent,
@@ -46,11 +48,14 @@ export interface ProjectRequirements {
   scalability?: string;
   timeline?: string;    
   additionalRequirements?: string;
+  projectApproach?: string;
+  developmentMethodology?: string;
 }
 
 export interface RequirementsFormProps {
   children?: ReactNode;
   onSubmit: (data: ProjectRequirements) => void;
+  initialDescription?: string;
 }
 
 const formSchema = z.object({
@@ -63,6 +68,8 @@ const formSchema = z.object({
   security: z.string().optional(),
   features: z.array(z.string()).min(1, { message: "Select at least one feature" }),
   customRequirements: z.string().optional(),
+  projectApproach: z.string().default("Object Oriented"),
+  developmentMethodology: z.string().default("Agile"),
 });
 
 const projectTypes = [
@@ -81,6 +88,23 @@ const scalabilityOptions = [
   { label: "Enterprise (Global scale)", value: "enterprise" },
 ];
 
+const projectApproachOptions = [
+  { label: "Object Oriented", value: "Object Oriented" },
+  { label: "Procedural", value: "Procedural" },
+  { label: "Functional", value: "Functional" },
+  { label: "Service-Oriented", value: "Service-Oriented" },
+  { label: "Event-Driven", value: "Event-Driven" },
+];
+
+const developmentMethodologyOptions = [
+  { label: "Agile", value: "Agile" },
+  { label: "Waterfall", value: "Waterfall" },
+  { label: "Spiral", value: "Spiral" },
+  { label: "Prototyping", value: "Prototyping" },
+  { label: "DevOps", value: "DevOps" },
+  { label: "V-Model", value: "V-Model" },
+];
+
 const featureOptions = [
   { id: "auth", label: "Authentication" },
   { id: "db", label: "Database Storage" },
@@ -92,7 +116,7 @@ const featureOptions = [
   { id: "payment", label: "Payment Processing" },
 ];
 
-const RequirementsForm = ({ onSubmit }: RequirementsFormProps) => {
+const RequirementsForm = ({ onSubmit, initialDescription }: RequirementsFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -104,6 +128,8 @@ const RequirementsForm = ({ onSubmit }: RequirementsFormProps) => {
       timeConstraints: "",
       features: [],
       customRequirements: "",
+      projectApproach: "Object Oriented",
+      developmentMethodology: "Agile",
     },
   });
 
@@ -111,13 +137,26 @@ const RequirementsForm = ({ onSubmit }: RequirementsFormProps) => {
     onSubmit(values as ProjectRequirements);
   };
 
+  const handleSuggestionsReceived = (suggestions: GroqResponse) => {
+    // Update form with AI suggestions
+    if (suggestions.projectName) form.setValue('projectName', suggestions.projectName);
+    if (suggestions.projectType) form.setValue('projectType', suggestions.projectType);
+    if (suggestions.description) form.setValue('description', suggestions.description);
+    if (suggestions.scale) form.setValue('scalability', suggestions.scale);
+    if (suggestions.budget) form.setValue('budget', suggestions.budget);
+    if (suggestions.timeline) form.setValue('timeConstraints', suggestions.timeline);
+    if (suggestions.projectApproach) form.setValue('projectApproach', suggestions.projectApproach);
+    if (suggestions.developmentMethodology) form.setValue('developmentMethodology', suggestions.developmentMethodology);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-4xl mx-auto"
+      className="w-full max-w-7xl mx-auto"
     >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="border-gradient">
         <CardHeader className="bg-gradient-to-r from-architect-light via-architect to-architect-vibrant text-white rounded-t-lg">
           <CardTitle className="text-2xl font-bold">Project Requirements</CardTitle>
@@ -307,10 +346,68 @@ const RequirementsForm = ({ onSubmit }: RequirementsFormProps) => {
                     </div>
                     <FormMessage />
                   </FormItem>
-                )}
-              />
+                 )}
+               />
 
-              <FormField
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <FormField
+                   control={form.control}
+                   name="projectApproach"
+                   render={({ field }) => (
+                     <FormItem>
+                       <FormLabel>Project Approach</FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                         <FormControl>
+                           <SelectTrigger className="hover-input">
+                             <SelectValue placeholder="Choose project approach" />
+                           </SelectTrigger>
+                         </FormControl>
+                         <SelectContent>
+                           {projectApproachOptions.map((option) => (
+                             <SelectItem key={option.value} value={option.value}>
+                               {option.label}
+                             </SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                       <FormDescription>
+                         Select the programming paradigm for your project
+                       </FormDescription>
+                       <FormMessage />
+                     </FormItem>
+                   )}
+                 />
+
+                 <FormField
+                   control={form.control}
+                   name="developmentMethodology"
+                   render={({ field }) => (
+                     <FormItem>
+                       <FormLabel>Development Methodology</FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                         <FormControl>
+                           <SelectTrigger className="hover-input">
+                             <SelectValue placeholder="Choose development methodology" />
+                           </SelectTrigger>
+                         </FormControl>
+                         <SelectContent>
+                           {developmentMethodologyOptions.map((option) => (
+                             <SelectItem key={option.value} value={option.value}>
+                               {option.label}
+                             </SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                       <FormDescription>
+                         Select the development approach for your project
+                       </FormDescription>
+                       <FormMessage />
+                     </FormItem>
+                   )}
+                 />
+               </div>
+
+               <FormField
                 control={form.control}
                 name="customRequirements"
                 render={({ field }) => (
@@ -340,6 +437,15 @@ const RequirementsForm = ({ onSubmit }: RequirementsFormProps) => {
           </Form>
         </CardContent>
       </Card>
+      
+      {/* AI Chatbot */}
+      <div className="lg:sticky lg:top-6">
+        <ProjectChatbot 
+          initialDescription={initialDescription}
+          onSuggestionsReceived={handleSuggestionsReceived}
+        />
+      </div>
+      </div>
     </motion.div>
   );
 };
