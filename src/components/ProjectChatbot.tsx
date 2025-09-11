@@ -31,7 +31,7 @@ const ProjectChatbot = ({ initialDescription, onSuggestionsReceived }: ProjectCh
     setMessages([{
       id: '1',
       type: 'bot',
-      content: 'Hi! I\'m your AI assistant. I can help you with project suggestions based on your description. Please enter your Groq API key first, then describe your project idea!',
+      content: 'Hi! I\'m your Healthcare IT assistant. I specialize in hospital management systems and can help you plan your healthcare technology implementation. Please enter your Groq API key first, then describe your hospital\'s requirements!',
       timestamp: new Date()
     }]);
   }, []);
@@ -48,7 +48,7 @@ const ProjectChatbot = ({ initialDescription, onSuggestionsReceived }: ProjectCh
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         type: 'bot',
-        content: 'Great! API key set. Now tell me about your project idea and I\'ll provide tailored suggestions.',
+        content: 'Great! API key set. Now tell me about your hospital or clinic and I\'ll provide tailored suggestions for your management system.',
         timestamp: new Date()
       }]);
     }
@@ -77,12 +77,12 @@ const ProjectChatbot = ({ initialDescription, onSuggestionsReceived }: ProjectCh
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      const suggestions = await groqService.getProjectSuggestions(description);
+      const suggestions = await groqService.getHospitalSystemSuggestions(description);
       
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'bot',
-        content: suggestions.suggestions || 'Here are my suggestions for your project:',
+        content: suggestions.suggestions || 'Here are my suggestions for your hospital management system:',
         suggestions,
         timestamp: new Date()
       };
@@ -112,7 +112,7 @@ const ProjectChatbot = ({ initialDescription, onSuggestionsReceived }: ProjectCh
       <CardHeader className="bg-gradient-to-r from-architect-light to-architect text-white">
         <CardTitle className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
-          AI Project Assistant
+          Hospital Management System Assistant
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-4">
@@ -166,20 +166,26 @@ const ProjectChatbot = ({ initialDescription, onSuggestionsReceived }: ProjectCh
                     {message.suggestions && (
                       <div className="mt-3 pt-3 border-t border-muted-foreground/20">
                         <div className="space-y-2 text-xs">
-                          {message.suggestions.projectName && (
-                            <div><strong>Project Name:</strong> {message.suggestions.projectName}</div>
+                          {message.suggestions.hospitalName && (
+                            <div><strong>Hospital Name:</strong> {message.suggestions.hospitalName}</div>
                           )}
-                          {message.suggestions.projectType && (
-                            <div><strong>Type:</strong> {message.suggestions.projectType}</div>
+                          {message.suggestions.hospitalType && (
+                            <div><strong>Type:</strong> {message.suggestions.hospitalType}</div>
                           )}
-                          {message.suggestions.scale && (
-                            <div><strong>Scale:</strong> {message.suggestions.scale}</div>
+                          {message.suggestions.hospitalSize && (
+                            <div><strong>Size:</strong> {message.suggestions.hospitalSize}</div>
                           )}
-                          {message.suggestions.projectApproach && (
-                            <div><strong>Approach:</strong> {message.suggestions.projectApproach}</div>
+                          {message.suggestions.systemArchitecture && (
+                            <div><strong>Architecture:</strong> {message.suggestions.systemArchitecture}</div>
                           )}
-                          {message.suggestions.developmentMethodology && (
-                            <div><strong>Methodology:</strong> {message.suggestions.developmentMethodology}</div>
+                          {message.suggestions.implementationApproach && (
+                            <div><strong>Implementation:</strong> {message.suggestions.implementationApproach}</div>
+                          )}
+                          {message.suggestions.patientCapacity && (
+                            <div><strong>Patient Capacity:</strong> {message.suggestions.patientCapacity}</div>
+                          )}
+                          {message.suggestions.complianceRequirements && (
+                            <div><strong>Compliance:</strong> {message.suggestions.complianceRequirements}</div>
                           )}
                         </div>
                       </div>

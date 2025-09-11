@@ -12,8 +12,8 @@ const RequirementsPage = () => {
   const projectIdea = sessionStorage.getItem('projectIdea') || '';
 
   const handleSubmit = (requirements: ProjectRequirements) => {
-    if (!requirements.projectName.trim()) {
-      toast.error("Please enter a project name");
+    if (!requirements.hospitalName.trim()) {
+      toast.error("Please enter a hospital name");
       return;
     }
     
@@ -33,10 +33,10 @@ const RequirementsPage = () => {
       
       <main className="flex-1 container py-8">
         <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-5xl font-bold tracking-tight shiny-text animate-background-shine">Project Requirements</h1>
+          <h1 className="text-5xl font-bold tracking-tight shiny-text animate-background-shine">Hospital Management System Requirements</h1>
           <div className="w-40 h-1 bg-gradient-to-r from-architect-vibrant via-architect to-architect-magenta mx-auto mb-4 rounded-full"></div>
           <p className="mt-2 text-lg text-muted-foreground">
-            Let's gather detailed information about your project needs
+            Let's gather detailed information about your healthcare facility's technology needs
           </p>
         </div>
 

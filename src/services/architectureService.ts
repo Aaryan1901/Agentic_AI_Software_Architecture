@@ -50,7 +50,7 @@ export const generateArchitectureRecommendation = async (
     
     if (backendResponse) {
       const diagrams = createDiagramsFromBackendResponse(backendResponse);
-      const searchQuery = `${requirements.projectType} ${requirements.projectName}`;
+      const searchQuery = `${requirements.hospitalType} ${requirements.hospitalName} hospital management system`;
 
       const recommendation: ArchitectureRecommendation = {
         pattern: extractPattern(backendResponse.architecture),
@@ -197,7 +197,7 @@ const generateDeploymentOptions = (requirements: ProjectRequirements) => {
     });
   }
   
-  if (requirements.scale === 'medium') {
+  if (requirements.hospitalSize === 'medium') {
     options.push({
       name: 'Cloud Platform (AWS/GCP)',
       description: 'Scalable cloud infrastructure with pay-as-you-go pricing',
@@ -215,7 +215,7 @@ const generateDeploymentOptions = (requirements: ProjectRequirements) => {
     });
   }
   
-  if (requirements.scale === 'large' || requirements.scale === 'enterprise') {
+  if (requirements.hospitalSize === 'large' || requirements.hospitalSize === 'enterprise') {
     options.push({
       name: 'Kubernetes Cluster',
       description: 'Container orchestration for large-scale applications',
@@ -265,7 +265,7 @@ const generateFallbackRecommendation = async (
     let pattern = 'Layered Architecture';
     let description = `A ${requirements.projectType} application with a layered architecture approach.`;
     
-    if (requirements.scale === 'large' || requirements.scale === 'enterprise') {
+    if (requirements.hospitalSize === 'large' || requirements.hospitalSize === 'enterprise') {
       pattern = 'Microservices';
       description = `A scalable ${requirements.projectType} application using microservices architecture to handle large-scale operations.`;
     } else if (requirements.features.includes('realtime')) {

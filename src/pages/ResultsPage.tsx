@@ -209,8 +209,8 @@ const ResultsPage: React.FC = () => {
       <main className="flex-1 container py-8">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="text-3xl font-bold text-architect">{requirements.projectName}</h1>
-            <p className="text-muted-foreground mt-1">Architecture Recommendation Plan</p>
+            <h1 className="text-3xl font-bold text-architect">{requirements.hospitalName}</h1>
+            <p className="text-muted-foreground mt-1">Hospital Management System Architecture Plan</p>
           </div>
           
           <div className="flex gap-2 mt-4 md:mt-0">
@@ -232,12 +232,12 @@ const ResultsPage: React.FC = () => {
         <div className="bg-muted/20 border rounded-lg p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Project Type</h3>
-              <p className="font-medium">{formatProjectType(requirements?.projectType || '')}</p>
+              <h3 className="text-sm font-medium text-muted-foreground">Hospital Type</h3>
+              <p className="font-medium">{formatHospitalType(requirements?.hospitalType || '')}</p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Expected Scale</h3>
-              <p className="font-medium">{formatScale(requirements?.scale)}</p>
+              <h3 className="text-sm font-medium text-muted-foreground">Hospital Size</h3>
+              <p className="font-medium">{formatHospitalSize(requirements?.hospitalSize)}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Architecture Pattern</h3>
@@ -249,10 +249,10 @@ const ResultsPage: React.FC = () => {
                 <p className="font-medium">{requirements.budget}</p>
               </div>
             )}
-            {requirements?.timeConstraints && (
+            {requirements?.timeline && (
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Timeline</h3>
-                <p className="font-medium">{requirements.timeConstraints}</p>
+                <h3 className="text-sm font-medium text-muted-foreground">Implementation Timeline</h3>
+                <p className="font-medium">{requirements.timeline}</p>
               </div>
             )}
           </div>
