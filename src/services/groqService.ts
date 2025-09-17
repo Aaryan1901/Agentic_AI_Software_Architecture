@@ -1,16 +1,13 @@
 export interface GroqResponse {
-  hospitalName?: string;
-  hospitalType?: string;
+  projectName?: string;
+  projectType?: string;
   description?: string;
-  hospitalSize?: string;
+  scale?: string;
   budget?: string;
   timeline?: string;
-  complianceRequirements?: string;
-  systemArchitecture?: string;
-  implementationApproach?: string;
-  patientCapacity?: string;
-  departmentCount?: string;
-  staffSize?: string;
+  security?: string;
+  projectApproach?: string;
+  developmentMethodology?: string;
   suggestions: string;
 }
 
@@ -22,29 +19,26 @@ export class GroqService {
     this.apiKey = apiKey;
   }
 
-  async getHospitalSystemSuggestions(hospitalDescription: string): Promise<GroqResponse> {
-    const prompt = `Based on this hospital management system description: "${hospitalDescription}"
+  async getProjectSuggestions(projectDescription: string): Promise<GroqResponse> {
+    const prompt = `Based on this project description: "${projectDescription}"
 
-Please provide suggestions for a hospital management system in the following JSON format:
+Please provide suggestions for a software project in the following JSON format:
 {
-  "hospitalName": "suggested hospital/clinic name if not provided",
-  "hospitalType": "general|specialty|clinic|emergency|rehabilitation|maternity",
-  "description": "improved system description with specific healthcare requirements",
-  "hospitalSize": "small|medium|large|enterprise", 
-  "budget": "suggested implementation budget range",
-  "timeline": "suggested implementation timeline",
-  "complianceRequirements": "healthcare compliance requirements (HIPAA, HITECH, etc.)",
-  "systemArchitecture": "cloud|onpremise|hybrid|saas|microservices",
-  "implementationApproach": "phased|bigbang|pilot|parallel|modular",
-  "patientCapacity": "suggested daily patient capacity",
-  "departmentCount": "estimated number of departments",
-  "staffSize": "estimated total staff size",
-  "suggestions": "detailed explanation and recommendations for the hospital management system"
+  "projectName": "suggested project name",
+  "projectType": "webapp|mobile|api|data|ml|iot",
+  "description": "improved project description",
+  "scale": "low|medium|high|enterprise", 
+  "budget": "suggested budget range",
+  "timeline": "suggested timeline",
+  "security": "security recommendations",
+  "projectApproach": "Object Oriented|Procedural|Functional|Service-Oriented|Event-Driven",
+  "developmentMethodology": "Agile|Waterfall|Spiral|Prototyping|DevOps|V-Model",
+  "suggestions": "detailed explanation and recommendations"
 }
 
-Focus on healthcare-specific requirements, workflows, compliance needs, and integration with medical devices. Consider scalability for different hospital sizes and regulatory requirements. Be specific and practical for healthcare environments.`;
+Provide practical, realistic suggestions based on the project description. Be specific and helpful.`;
 
-    console.log('Making Groq API call with description:', hospitalDescription);
+    console.log('Making Groq API call with description:', projectDescription);
     console.log('Using API key:', this.apiKey ? 'API key is set' : 'NO API KEY');
 
     try {
@@ -56,7 +50,7 @@ Focus on healthcare-specific requirements, workflows, compliance needs, and inte
         messages: [
           {
             role: 'system',
-            content: 'You are a healthcare IT consultant specializing in hospital management systems. Always respond with valid JSON format as requested. Focus on healthcare workflows, compliance, and medical industry best practices.'
+            content: 'You are a helpful software architecture consultant. Always respond with valid JSON format as requested.'
           },
           {
             role: 'user',

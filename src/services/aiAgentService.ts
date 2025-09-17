@@ -3,14 +3,14 @@ import { toast } from "sonner";
 
 export interface AIAgentRequest {
   user_idea: string;
-  hospital_name: string;
-  hospital_type: string;
+  project_name: string;
+  project_type: string;
   project_description: string;
-  hospital_size: string;
+  scale: string;
   budget: string;
   project_duration: number;
-  compliance_requirements: string;
-  key_modules: string[];
+  security_requirements: string;
+  key_features: string[];
   additional_requirements: string;
 }
 
@@ -28,28 +28,28 @@ export interface BackendError {
 }
 
 export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAgentRequest => {
-  const sizeMap: Record<string, string> = {
-    'small': 'Small Clinic',
-    'medium': 'Medium Hospital',
-    'large': 'Large Hospital',
-    'enterprise': 'Multi-facility Healthcare System'
+  const scaleMap: Record<string, string> = {
+    'small': 'Small',
+    'medium': 'Medium',
+    'large': 'Large',
+    'enterprise': 'Enterprise'
   };
 
-  const duration = requirements.timeline 
-    ? parseInt(requirements.timeline) 
-    : 12; // default 12 months for hospital systems
+  const duration = requirements.timeConstraints 
+    ? parseInt(requirements.timeConstraints) 
+    : 3; // default 3 months
 
   return {
-    user_idea: requirements.hospitalName,
-    hospital_name: requirements.hospitalName,
-    hospital_type: requirements.hospitalType,
+    user_idea: requirements.projectName,
+    project_name: requirements.projectName,
+    project_type: requirements.projectType,
     project_description: requirements.description || "No description provided",
-    hospital_size: sizeMap[requirements.hospitalSize] || requirements.hospitalSize,
+    scale: scaleMap[requirements.scale] || requirements.scale,
     budget: requirements.budget || "Not specified",
     project_duration: duration,
-    compliance_requirements: requirements.complianceRequirements || "HIPAA compliance required",
-    key_modules: requirements.selectedModules,
-    additional_requirements: `Patient Capacity: ${requirements.patientCapacity}, Departments: ${requirements.departmentCount}, Staff Size: ${requirements.staffSize}`
+    security_requirements: requirements.security || "Standard security measures",
+    key_features: requirements.features,
+    additional_requirements: requirements.customRequirements || "None"
   };
 };
 

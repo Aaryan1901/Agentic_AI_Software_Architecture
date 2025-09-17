@@ -148,7 +148,7 @@ const ArchitectureDisplay: React.FC<ArchitectureDisplayProps> = ({
           <div>
             <CardTitle className="text-architect">Architecture Recommendation</CardTitle>
             <CardDescription>
-              Based on your hospital: <span className="font-medium">{requirements.hospitalName}</span>
+              Based on your project: <span className="font-medium">{requirements.projectName}</span>
               {renderSourceBadge()}
             </CardDescription>
           </div>
