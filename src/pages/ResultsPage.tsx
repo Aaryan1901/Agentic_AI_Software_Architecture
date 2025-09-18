@@ -237,7 +237,7 @@ const ResultsPage: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Expected Scale</h3>
-              <p className="font-medium">{formatScale(requirements?.scale)}</p>
+              <p className="font-medium">{formatScale(requirements?.scalability)}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Architecture Pattern</h3>

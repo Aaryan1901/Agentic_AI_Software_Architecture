@@ -44,10 +44,10 @@ export const convertToAIAgentRequest = (requirements: ProjectRequirements): AIAg
     project_name: requirements.projectName,
     project_type: requirements.projectType,
     project_description: requirements.description || "No description provided",
-    scale: scaleMap[requirements.scale] || requirements.scale,
+    scale: scaleMap[requirements.scalability] || requirements.scalability,
     budget: requirements.budget || "Not specified",
     project_duration: duration,
-    security_requirements: requirements.security || "Standard security measures",
+    security_requirements: requirements.securityRequirements?.join(', ') || "Standard security measures",
     key_features: requirements.features,
     additional_requirements: requirements.customRequirements || "None"
   };

@@ -179,7 +179,7 @@ const createFramework = (
 const generateDeploymentOptions = (requirements: ProjectRequirements) => {
   const options = [];
   
-  if (requirements.scale === 'small') {
+  if (requirements.scalability === 'small' || requirements.scalability === 'low') {
     options.push({
       name: 'Shared Hosting',
       description: 'Cost-effective solution for small applications',
@@ -197,7 +197,7 @@ const generateDeploymentOptions = (requirements: ProjectRequirements) => {
     });
   }
   
-  if (requirements.scale === 'medium') {
+  if (requirements.scalability === 'medium') {
     options.push({
       name: 'Cloud Platform (AWS/GCP)',
       description: 'Scalable cloud infrastructure with pay-as-you-go pricing',
@@ -215,7 +215,7 @@ const generateDeploymentOptions = (requirements: ProjectRequirements) => {
     });
   }
   
-  if (requirements.scale === 'large' || requirements.scale === 'enterprise') {
+  if (requirements.scalability === 'large' || requirements.scalability === 'high' || requirements.scalability === 'enterprise') {
     options.push({
       name: 'Kubernetes Cluster',
       description: 'Container orchestration for large-scale applications',
@@ -238,7 +238,7 @@ const generateDeploymentOptions = (requirements: ProjectRequirements) => {
     name: 'Container Deployment',
     description: 'Docker-based deployment for flexibility',
     costEstimate: '$50-200/month',
-    recommended: requirements.scale !== 'enterprise',
+    recommended: requirements.scalability !== 'enterprise',
     tags: ['containers', 'portable']
   });
   
@@ -265,7 +265,7 @@ const generateFallbackRecommendation = async (
     let pattern = 'Layered Architecture';
     let description = `A ${requirements.projectType} application with a layered architecture approach.`;
     
-    if (requirements.scale === 'large' || requirements.scale === 'enterprise') {
+    if (requirements.scalability === 'large' || requirements.scalability === 'high' || requirements.scalability === 'enterprise') {
       pattern = 'Microservices';
       description = `A scalable ${requirements.projectType} application using microservices architecture to handle large-scale operations.`;
     } else if (requirements.features.includes('realtime')) {
